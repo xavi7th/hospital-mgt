@@ -1,0 +1,23 @@
+{
+    "name": "xavi7th/userauth",
+    "description": "",
+    "authors": [
+        {
+            "name": "Leinad Ose",
+            "email": "xavi7th@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Modules\\UserAuth\\": ""
+        }
+    }
+}

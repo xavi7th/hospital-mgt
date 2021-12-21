@@ -1,4 +1,4 @@
-import { mediaHandler, toCurrency } from "@public-shared/helpers";
+import { mediaHandler, toCurrency } from "@PublicShared/helpers";
 import { Inertia } from "@inertiajs/inertia";
 import objectFitImages from 'object-fit-images';
 

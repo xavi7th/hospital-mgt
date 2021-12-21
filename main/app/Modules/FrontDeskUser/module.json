@@ -1,0 +1,13 @@
+{
+    "name": "FrontDeskUser",
+    "alias": "frontdeskuser",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\FrontDeskUser\\Providers\\FrontDeskUserServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

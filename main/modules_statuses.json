@@ -1,4 +1,6 @@
 {
     "PublicPages": true,
-    "UserAuth": true
+    "UserAuth": true,
+    "FrontDeskUser": true,
+    "Miscellaneous": true
 }

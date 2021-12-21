@@ -14,6 +14,14 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'name_slug' => env('APP_NAME_SLUG', 'Laravel'),
+    'email' => env('APP_EMAIL', null),
+    'address' => env('APP_ADDRESS', null),
+    'phone' => env('APP_PHONE', NULL),
+
+    'must_activate_users' => env('APP_ADMIN_MUST_VERIFY_USERS', false),
+    'can_update_profile' => env('APP_USERS_CAN_UPDATE_PROFILE', false),
+    'can_delete_users' => env('APP_ADMIN_CAN_DELETE_USERS', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -67,7 +75,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Africa/Lagos',
 
     /*
     |--------------------------------------------------------------------------

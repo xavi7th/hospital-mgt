@@ -16,8 +16,8 @@ return [
     'superadmin' => [
       'superadmin.*',
     ],
-    'appuser' => [
-      'appuser.*'
+    'frontdeskuser' => [
+      'frontdeskuser.*'
     ],
     'generic' => [
       'generic.*',

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -46,14 +45,9 @@ class User extends Authenticatable
     return $this instanceof SuperAdmin;
   }
 
-  public function isAdmin(): bool
+  public function isFrontDeskUser(): bool
   {
-    return $this instanceof Admin;
-  }
-
-  public function isAppUser(): bool
-  {
-    return $this instanceof AppUser;
+    return $this instanceof FrontDeskUser;
   }
 
   public function getUserType()
@@ -65,8 +59,8 @@ class User extends Authenticatable
       case $this->isSuperAdmin():
         $user_type = ['isSuperAdmin' => true];
         break;
-      case $this->isAppUser():
-        $user_type = ['isAppUser' => true];
+      case $this->isFrontDeskUser():
+        $user_type = ['isFrontDeskUser' => true];
         break;
       default:
         $user_type = [];
