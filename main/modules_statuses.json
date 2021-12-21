@@ -1,3 +1,4 @@
 {
-    "PublicPages": true
+    "PublicPages": true,
+    "UserAuth": true
 }
