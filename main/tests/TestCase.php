@@ -12,11 +12,12 @@ use Illuminate\Database\SQLiteConnection;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
 use Illuminate\Database\Schema\SQLiteBuilder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-  use CreatesApplication, WithFaker;
+  use CreatesApplication, WithFaker, RefreshDatabase;
 
   protected $super_admin;
 

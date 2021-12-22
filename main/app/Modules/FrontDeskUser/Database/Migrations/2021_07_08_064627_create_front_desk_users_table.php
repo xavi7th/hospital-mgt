@@ -15,15 +15,12 @@ class CreateFrontDeskUsersTable extends Migration
   {
     Schema::create('front_desk_users', function (Blueprint $table) {
       $table->id();
-      $table->string('email');
+      $table->string('name');
+      $table->string('email')->unique();
       $table->string('password');
-      $table->string('first_name');
-      $table->string('last_name');
-      $table->string('phone');
       $table->string('avatar_url')->nullable();
-      $table->string('account_id');
-      $table->timestamp('verified_at')->nullable();
-      $table->boolean('is_active')->default(true);
+      $table->timestamp('activated_at')->nullable();
+      $table->boolean('is_active');
 
       $table->timestamps();
       $table->softDeletes();

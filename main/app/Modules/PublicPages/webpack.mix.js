@@ -11,5 +11,5 @@ mix.webpackConfig({
 	},
 })
 
-mix.js(__dirname + '/Resources/js/app.js', 'js/app.js')
-    .sass( __dirname + '/Resources/sass/app.scss', 'css/app.css');
+mix.js(__dirname + '/Resources/js/app.js', 'js/app-init.js')
+    .sass( __dirname + '/Resources/sass/app.scss', 'css/app-init.css');

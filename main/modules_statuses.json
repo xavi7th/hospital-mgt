@@ -2,5 +2,6 @@
     "PublicPages": true,
     "UserAuth": true,
     "FrontDeskUser": true,
-    "Miscellaneous": true
+    "Miscellaneous": true,
+    "SuperAdmin": true
 }

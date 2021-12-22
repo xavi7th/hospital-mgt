@@ -71,12 +71,47 @@ class HandleInertiaRequests extends Middleware
    */
   public function rootView(Request $request): string
   {
-    if ($request->user()) {
+    //! Don't return appuser blade for auth user when on public pages
+    if ($request->user()  && ! Str::contains(Route::currentRouteName(), 'app.')) {
       return strtolower($request->user()->getType()) . '::app';
-    } elseif (Str::contains(Route::currentRouteName(), 'login')) {
-      return 'frontdeskuser::app';
-    } else {
+    }
+     elseif (Str::contains(Route::currentRouteName(), 'auth')) {
+      return 'userauth::app';
+    }
+     else {
       return $this->rootView;
+    }
+  }
+
+  /**
+   * Resolves and prepares validation errors in such
+   * a way that they are easier to use client-side.
+   *
+   * @param  Request  $request
+   * @return object
+   */
+  public function resolveValidationErrors(Request $request): object
+  {
+    if (!$request->session()->has('errors') && !$request->session()->has('flash.error')) {
+      return (object) [];
+    }
+
+    if ($request->session()->has('errors')) {
+      return (object) collect($request->session()->get('errors')->getBags())->map(function ($bag) {
+        return (object) collect($bag->messages())->map(function ($errors) {
+          return $errors[0];
+        })->toArray();
+      })->pipe(function ($bags) use ($request) {
+        if ($bags->has('default') && $request->header('x-inertia-error-bag')) {
+          return [$request->header('x-inertia-error-bag') => $bags->get('default')];
+        } elseif ($bags->has('default')) {
+          return $bags->get('default');
+        } else {
+          return $bags->toArray();
+        }
+      });
+    } elseif ($request->session()->has('flash.error')) {
+      return (object) $request->session()->get('flash');
     }
   }
 }

@@ -62,17 +62,6 @@ class FrontDeskUserController extends Controller
 
     return Inertia::render('SuperAdmin::ManageFrontDeskUsers', [
       'front_desk_users' => (new FrontDeskUserTransformer)->collectionTransformer(FrontDeskUser::with('user_balance_statistics')->latest()->get(), 'transformForFrontDeskUser'),
-      'can_view_passwords' => config('app.can_view_passwords'),
-      'has_user_bonus' => config('app.has_bonus'),
-      'must_accept_terms' => config('app.must_accept_terms'),
-      'must_upload_id' => config('app.must_upload_id'),
-      'must_activate_users' => config('app.must_activate_users'),
-      'must_have_unique_wallets' => config('app.must_have_unique_wallets'),
-      'must_upload_utility_bill' => config('app.must_upload_utility_bill'),
-      'can_request_alt_deposits' => config('app.can_request_alt_deposits'),
-      'can_disable_withdrawals' => config('app.can_disable_withdrawals'),
-      'can_delete_users' => config('app.can_delete_users'),
-      'can_send_auth_codes' => config('app.can_send_auth_codes'),
     ])->withViewData([
       'title' => 'View App Users',
     ]);
@@ -101,15 +90,6 @@ class FrontDeskUserController extends Controller
   public function activateFrontDeskUserAccount(Request $request, FrontDeskUser $front_desk_user)
   {
     $this->authorize('activate', $front_desk_user);
-
-    if (! $front_desk_user->hasVerifiedEmail()) {
-      return redirect()->route('frontdeskusers.list')->withFlash(['error' => 'Account NOT activated. The user has not verified their email. We have to ensure that the user can receive emails.']);
-    }
-
-
-    if (config('app.must_have_unique_wallets') && is_null($front_desk_user->btc_wallet)) {
-      return redirect()->route('frontdeskusers.list')->withFlash(['error' => 'This user has no btc wallet. Set a BTC wallet before activating the user\'s account']);
-    }
 
     $front_desk_user->account_activated_at = now();
     $front_desk_user->save();

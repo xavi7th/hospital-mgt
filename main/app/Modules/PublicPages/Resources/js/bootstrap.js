@@ -1,37 +1,50 @@
-import { App } from '@inertiajs/inertia-svelte'
+import { createInertiaApp } from '@inertiajs/inertia-svelte'
 import { InertiaProgress } from '@inertiajs/progress'
 import { Inertia } from "@inertiajs/inertia";
-import { getErrorString, mediaHandler } from "@PublicShared/helpers";
+import { getErrorString } from "@miscellaneous-shared/utils";
 
 window.swal = require('sweetalert2')
 window._ = {
+	isString: require('lodash/isString'),
+	size: require('lodash/size'),
 	split: require('lodash/split'),
+	reduce: require('lodash/reduce'),
+	truncate: require('lodash/truncate'),
 }
 window.Toast = swal.mixin({
 	toast: true,
 	position: 'top-end',
 	showConfirmButton: false,
-	timer: 2000,
-	icon: "success"
+	timer: 5000,
+	icon: "success",
+  didOpen: (toast) => {
+    toast.addEventListener('mouseenter', swal.stopTimer)
+    toast.addEventListener('mouseleave', swal.resumeTimer)
+  }
 });
 
 window.ToastLarge = swal.mixin({
 	icon: "success",
 	title: 'To be implemented!',
 	html: 'I will close in <b></b> milliseconds.',
-	timer: 3000,
+  showConfirmButton: false,
+	timer: 10000,
   timerProgressBar: true,
-	onBeforeOpen: () => {
+	willOpen: () => {
 		swal.showLoading()
 	},
+  didOpen: (toast) => {
+    toast.addEventListener('mouseenter', swal.stopTimer)
+    toast.addEventListener('mouseleave', swal.resumeTimer)
+  },
 	// onClose: () => {}
 })
 
 window.BlockToast = swal.mixin({
-	showConfirmButton: true,
-	onBeforeOpen: () => {
-		swal.showLoading()
+  willOpen: () => {
+    swal.showLoading()
 	},
+  showConfirmButton: false,
 	showCloseButton: false,
 	allowOutsideClick: false,
 	allowEscapeKey: false
@@ -71,13 +84,11 @@ InertiaProgress.init({
 })
 
 Inertia.on('start', (event) => {
-	console.log(event);
-	jQuery('#page-loader')
-		.fadeIn()
+	// console.log(event);
 })
 
 Inertia.on('progress', (event) => {
-  console.log(event);
+  // console.log(event);
 })
 
 Inertia.on('success', (e) => {
@@ -86,29 +97,26 @@ Inertia.on('success', (e) => {
       title: "Success",
       html: e.detail.page.props.flash.success,
       icon: "success",
-      timer: 1000,
+      timer: 5000,
       allowEscapeKey: true
     } );
   }
   else {
     swal.close();
   }
-  jQuery('#page-loader')
-  	.fadeOut()
 })
 
 Inertia.on('error', (e) => {
   console.log(`There were errors on your visit`)
-  console.log(e)
-  jQuery('#page-loader')
-  	.fadeOut()
+  // console.log(e)
   ToastLarge.fire( {
     title: "Error",
     html: getErrorString( e.detail.errors ),
     icon: "error",
     timer:10000, //milliseconds
+    allowEscapeKey: true,
     footer:
-    	`Our support email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:${process.env.MIX_APP_EMAIL}">${process.env.MIX_APP_EMAIL}</a>`,
+    	`Our support email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:support@skymarkets24.com">support@skymarkets24.com</a>`,
   } );
 })
 
@@ -118,8 +126,6 @@ Inertia.on('invalid', (event) => {
   console.log(event);
 
   event.preventDefault()
-  jQuery('#page-loader')
-  	.fadeOut()
   Toast.fire({
     position: 'top',
     title: 'Oops!',
@@ -132,62 +138,43 @@ Inertia.on('exception', (event) => {
   console.log(event);
   console.log(`An unexpected error occurred during an Inertia visit.`)
   console.log(event.detail.error)
-  jQuery('#page-loader')
-  	.fadeOut()
 })
 
 Inertia.on('finish', (e) => {
   // console.log(e);
 })
 
-let { isMobile, isDesktop } = mediaHandler();
+createInertiaApp({
+  resolve: name => {
 
-const app = document.getElementById('app')
-new App({
-	target: app,
-	props: {
-		initialPage: JSON.parse(app.dataset.page),
-		resolveComponent: str => {
-			let [module, page] = _.split(str, '::');
+    let [module, component] = _.split(name, '::');
 
-			return import(
-					/* webpackChunkName: "js/[request]" */
-					/* webpackPrefetch: true */
-					`../../../${module}/Resources/js/Pages/${page}.svelte`)
-		},
-    resolveErrors: page => ((page.props.flash.error || page.props.errors) || {}),
-		transformProps: props => {
-			return {
-				...props,
-				isMobile,
-				isDesktop
-			}
-		}
-	},
+    return import(
+      /* webpackChunkName: "js/[request]" */
+      /* webpackPrefetch: true */
+      `../../../${module}/Resources/js/Pages/${component}.svelte`)
+  },
+  setup({ el, App, props }) {
+    // console.log(props);
+    if (Object.entries(props.initialPage.props.errors).length) {
+      ToastLarge.fire( {
+        title: "Error",
+        html: getErrorString( props.initialPage.props.errors ),
+        icon: "error",
+        timer:10000, //milliseconds
+        footer:
+          `Our support email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:${process.env.MIX_APP_EMAIL}">${process.env.MIX_APP_EMAIL}</a>`,
+      } );
+    }
+    else if (props.initialPage.props.flash.success) {
+      ToastLarge.fire( {
+        title: "Success",
+        html: props.initialPage.props.flash.success,
+        icon: "success",
+        timer: 2000,
+        allowEscapeKey: true
+      } );
+    }
+    new App({ target: el, props })
+  },
 })
-
-/**
- *! Cause back() and forward() buttons of the browser to refresh the browser state
- */
-// if (!('onpopstate' in window)) {
-// window.addEventListener('popstate', () => {
-// 	Inertia.reload({ preserveScroll: true, preserveState: false })
-// })
-// }
-
-/**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allows your team to easily build robust real-time web applications.
- */
-
-// import Echo from 'laravel-echo';
-
-// window.Pusher = require('pusher-js');
-
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: process.env.MIX_PUSHER_APP_KEY,
-//     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-//     forceTLS: true
-// });

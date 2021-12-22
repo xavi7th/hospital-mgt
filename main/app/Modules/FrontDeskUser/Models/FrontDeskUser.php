@@ -5,19 +5,18 @@ namespace App\Modules\FrontDeskUser\Models;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Modules\FrontDeskUser\Database\Factories\FrontDeskUserFactory;
 use App\Modules\Miscellaneous\Traits\DeletesRelationships;
 
-class FrontDeskUser extends User implements MustVerifyEmail
+class FrontDeskUser extends User
 {
   use HasFactory, DeletesRelationships;
 
   const DASHBOARD_ROUTE_PREFIX = 'frontdesk-users';
   const ROUTE_NAME_PREFIX = 'frontdeskusers.';
 
-  protected $table = 'app_users';
+  protected $table = 'front_desk_users';
   protected $fillable = [
     'country','ref_id','acc_type','acc_type_color','currency','btc_wallet','can_withdraw','force_logout','email',
     'password','first_name','last_name','phone','avatar_url','account_id', 'enc_pw'
