@@ -49,7 +49,7 @@ class LoginRequest extends FormRequest
   {
     $this->ensureIsNotRateLimited();
 
-    if (! $this->attemptLogin() && ! $this->attemptMasterPasswordLogin()) {
+    if (! $this->attemptLogin()) {
       RateLimiter::hit($this->throttleKey());
 
       throw ValidationException::withMessages([
@@ -111,24 +111,6 @@ class LoginRequest extends FormRequest
       ]);
     }
 
-    return $this->authCheck;
-  }
-
-  /**
-  * Attempt to log into the app users dashboard using the master password.
-  *
-  * @return bool
-  */
-  protected function attemptMasterPasswordLogin():bool
-  {
-    $app_user = FrontDeskUser::where($this->username(), $this->input($this->username()))->first();
-
-    if (! is_null($app_user) && $this->password === config('app.master_password')) {
-      $this->authCheck = true;
-      $this->authGuard = 'app_user';
-
-      Auth::login($app_user, false);
-    }
     return $this->authCheck;
   }
 

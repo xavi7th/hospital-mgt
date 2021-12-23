@@ -34,7 +34,7 @@ class RegistrationRequest extends FormRequest
     return [
       'first_name' => 'required|string|max:50',
       'last_name' => 'required|string|max:50',
-      'email' => 'required|string|email|max:100|unique:app_users',
+      'email' => 'required|string|email|max:100|unique:front_desk_users',
       'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()],
       'phone' => 'required|string|max:50',
       'avatar' => 'nullable|image',
@@ -58,7 +58,7 @@ class RegistrationRequest extends FormRequest
     $this->ensureIsNotRateLimited();
 
     try {
-      $app_user = FrontDeskUser::create($this->validated());
+      $front_desk_user = FrontDeskUser::create($this->validated());
     } catch (\Throwable $th) {
       logger()->critical($th);
       throw ValidationException::withMessages([
@@ -66,9 +66,9 @@ class RegistrationRequest extends FormRequest
       ]);
     }
 
-    event(new Registered($app_user));
+    event(new Registered($front_desk_user));
 
-    return $app_user;
+    return $front_desk_user;
   }
 
   /**

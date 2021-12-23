@@ -3,5 +3,6 @@
     "UserAuth": true,
     "FrontDeskUser": true,
     "Miscellaneous": true,
-    "SuperAdmin": true
+    "SuperAdmin": true,
+    "Patient": true
 }

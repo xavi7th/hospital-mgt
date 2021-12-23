@@ -5,7 +5,7 @@ namespace App\Modules\FrontDeskUser\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class OnlyFrontDeskUsersWhoHaveBeenAdminVerified
+class OnlyFrontDeskUsersWhoHaveBeenActivated
 {
   /**
    * Handle an incoming request.
@@ -16,7 +16,7 @@ class OnlyFrontDeskUsersWhoHaveBeenAdminVerified
    */
   public function handle(Request $request, Closure $next)
   {
-    if (config('app.must_activate_users') && $request->user()->isFrontDeskUser() && $request->user()->hasUploadedId() && ! $request->user()->isAaccountActivated() ) {
+    if (config('app.must_activate_users') && $request->user()->isFrontDeskUser() && ! $request->user()->isAccountActivated() ) {
       return redirect()->route('frontdeskusers.activation.pending');
     }
     return $next($request);

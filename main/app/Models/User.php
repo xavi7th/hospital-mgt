@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Notifications\Notifiable;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
+use App\Modules\FrontDeskUser\Models\FrontDeskUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -50,12 +54,14 @@ class User extends Authenticatable
     return $this instanceof FrontDeskUser;
   }
 
+  public function dashboardRoute(): string
+  {
+    return Str::plural(strtolower($this->getType())) . '.dashboard';
+  }
+
   public function getUserType()
   {
     switch (true) {
-      case $this->isAdmin():
-        $user_type = ['isAdmin' => true];
-        break;
       case $this->isSuperAdmin():
         $user_type = ['isSuperAdmin' => true];
         break;
@@ -69,9 +75,23 @@ class User extends Authenticatable
     return array_merge($user_type, ['user_type' => strtolower($this->getType())]);
   }
 
-
   public function getType(): string
   {
     return class_basename(get_class($this));
+  }
+
+  public function authGuard()
+  {
+    return Str::snake($this->getType());
+  }
+
+  public function logout(): void
+  {
+    Auth::guard($this->authGuard())->logout();
+  }
+
+  public function setPasswordAttribute($value)
+  {
+    $this->attributes['password'] = bcrypt($value);
   }
 }

@@ -43,7 +43,7 @@ class FrontDeskUserTransformer
       'avatar_url' => (string)$user->avatar_url,
       'is_active' => (bool)$user->is_active,
       'is_suspended' => (bool)! $user->is_active,
-      'is_activated' => (bool)$user->isAaccountActivated(),
+      'is_activated' => (bool)$user->isAccountActivated(),
     ];
   }
 }

@@ -12,7 +12,7 @@ trait IsStaff
 
     static::creating(function ($model)
     {
-      $model->forceFill(['type' => static::class]);
+      $model->forceFill(['user_type' => static::class]);
     });
   }
 
@@ -22,7 +22,7 @@ trait IsStaff
 
     static::addGlobalScope('model', function (Builder $builder)
     {
-      $builder->where('type', static::class);
+      $builder->where('user_type', static::class);
     });
   }
 }

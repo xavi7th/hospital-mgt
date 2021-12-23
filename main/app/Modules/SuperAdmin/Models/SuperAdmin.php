@@ -9,15 +9,20 @@ use App\Modules\UserAuth\Traits\IsStaff;
 
 class SuperAdmin extends User
 {
-    use HasFactory, IsStaff;
+  use HasFactory, IsStaff;
 
-    const ROUTE_NAME_PREFIX = 'superadmins.';
-    const DASHBOARD_ROUTE_PREFIX = 'super-admins';
+  const ROUTE_NAME_PREFIX = 'superadmins.';
+  const DASHBOARD_ROUTE_PREFIX = 'super-admins';
 
-    protected $table = 'staff';
+  protected $table = 'staff';
 
-    protected static function newFactory()
-    {
-        return SuperAdminFactory::new();
-    }
+  public function getIsActiveAttribute()
+  {
+    return true;
+  }
+
+  protected static function newFactory()
+  {
+    return SuperAdminFactory::new();
+  }
 }

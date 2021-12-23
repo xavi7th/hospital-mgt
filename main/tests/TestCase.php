@@ -32,8 +32,8 @@ abstract class TestCase extends BaseTestCase
   {
     parent::setUp();
 
-    $this->super_admin = SuperAdmin::factory()->create();
-    $this->front_desk_user = FrontDeskUser::factory()->active()->create();
+    $this->super_admin = SuperAdmin::factory()->create(['password' => 'pass']);
+    $this->front_desk_user = FrontDeskUser::factory()->active()->create(['password' => 'pass']);
   }
 
   /**
@@ -84,11 +84,10 @@ abstract class TestCase extends BaseTestCase
     return Str::snake(class_basename(get_class(($user))));
   }
 
-  protected function set_user_props($active = true, $terms_accepted = true, $activated = true, $id_uploaded = true)
+  protected function set_user_props($active = true, $activated = true)
   {
     $this->front_desk_user->is_active = $active;
-    $this->front_desk_user->activated_at = $activated ? now() : null;
-    $this->app_user->id_card_thumb_url = $id_uploaded ? $this->faker->imageUrl() : null;
-    $this->app_user->save();
+    $this->front_desk_user->account_activated_at = $activated ? now() : null;
+    $this->front_desk_user->save();
   }
 }

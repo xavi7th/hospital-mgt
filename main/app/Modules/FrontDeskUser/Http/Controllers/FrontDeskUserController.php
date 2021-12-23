@@ -5,29 +5,19 @@ namespace App\Modules\FrontDeskUser\Http\Controllers;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
 use App\Modules\FrontDeskUser\Models\FrontDeskUser;
-use App\Modules\Miscellaneous\Models\ForexChart;
 use App\Modules\FrontDeskUser\Notifications\AccountActivated;
 use App\Modules\FrontDeskUser\Transformers\FrontDeskUserTransformer;
-use App\Modules\FrontDeskUser\Http\Requests\UploadIDCardRequest;
-use App\Modules\Miscellaneous\Transformers\ForexChartTransformer;
+use App\Modules\SuperAdmin\Http\Requests\CreateUserRequest;
 
 class FrontDeskUserController extends Controller
 {
-
 
   public function index(Request $request)
   {
     $this->authorize('accessDashboard', FrontDeskUser::class);
 
-    return Inertia::render('FrontDeskUser::Dashboard', [
-      'current_plan' => $request->user()->current_plan,
-      'has_user_bonus' => config('app.has_bonus'),
-      'can_suspend_investments' => config('app.can_suspend_investments'),
-      'can_upload_pop' => config('app.can_upload_pop'),
-      'forex_charts' => Cache::rememberForever('forex_charts' , fn() => (new ForexChartTransformer)->collectionTransformer(ForexChart::all(), 'transform')->keyBy('chart_slug')),
-    ])->withViewData([
+    return Inertia::render('FrontDeskUser::Dashboard')->withViewData([
       'title' => 'Welcome',
       'metaDesc' => ''
     ]);
@@ -60,11 +50,20 @@ class FrontDeskUserController extends Controller
   {
     $this->authorize('viewAny', FrontDeskUser::class);
 
-    return Inertia::render('SuperAdmin::ManageFrontDeskUsers', [
-      'front_desk_users' => (new FrontDeskUserTransformer)->collectionTransformer(FrontDeskUser::with('user_balance_statistics')->latest()->get(), 'transformForFrontDeskUser'),
+    return Inertia::render('SuperAdmin::ManageUsers', [
+      'front_desk_users' => (new FrontDeskUserTransformer)->collectionTransformer(FrontDeskUser::latest()->get(), 'transformForFrontDeskUser'),
     ])->withViewData([
       'title' => 'View App Users',
     ]);
+  }
+
+  public function createFrontDeskUser(CreateUserRequest $request)
+  {
+    $this->authorize('create', FrontDeskUser::class);
+
+    $request->createUser(FrontDeskUser::class);
+
+    return redirect()->route('frontdeskusers.list')->withFlash(['success' => 'Front Desk User account created. Activate the account so the user can login.']);
   }
 
   public function suspendFrontDeskUser(Request $request, FrontDeskUser $front_desk_user)

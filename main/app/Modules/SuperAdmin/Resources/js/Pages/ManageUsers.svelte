@@ -9,7 +9,7 @@
   import { Inertia } from '@inertiajs/inertia';
 import { toCurrency } from '@PublicShared/helpers';
 
-  export let app_users = [],
+  export let users = [],
     must_verify_users = false,
     can_delete_users = false;
 
@@ -71,7 +71,7 @@ import { toCurrency } from '@PublicShared/helpers';
       </div>
   </div>
 
-  {#each app_users as user (user.id)}
+  {#each users as user (user.id)}
     <div class="intro-y col-span-12 md:col-span-6">
       <div class="box">
           <div class="flex flex-col items-start p-5 border-b border-gray-200 dark:border-dark-5">

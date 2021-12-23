@@ -26,7 +26,7 @@ class SuperAdminController extends Controller
     return [
       'statistics' => fn () => [
         'total_users_count' => (int)FrontDeskUser::count(),
-        'unverified_users_count' => (int) FrontDeskUser::unverified()->count(),
+        'unverified_users_count' => (int) FrontDeskUser::unactivated()->count(),
       ]
     ];
   }

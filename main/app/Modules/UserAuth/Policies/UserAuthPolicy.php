@@ -14,7 +14,7 @@ class UserAuthPolicy
 
   public function awaitActivation(User $user)
   {
-    return config('app.must_activate_users') && $user->isFrontDeskUser() && $user->hasUploadedId() && ! $user->isAaccountActivated() ? $this->allow() : $this->deny('Your account has been verified by our financial team already. Please visit your dashboard instead.');
+    return config('app.must_activate_users') && $user->isFrontDeskUser() && $user->hasUploadedId() && ! $user->isAccountActivated() ? $this->allow() : $this->deny('Your account has been verified by our financial team already. Please visit your dashboard instead.');
   }
 
 }

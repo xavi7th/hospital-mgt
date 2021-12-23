@@ -19,8 +19,8 @@ class CreateFrontDeskUsersTable extends Migration
       $table->string('email')->unique();
       $table->string('password');
       $table->string('avatar_url')->nullable();
-      $table->timestamp('activated_at')->nullable();
-      $table->boolean('is_active');
+      $table->timestamp('account_activated_at')->nullable();
+      $table->boolean('is_active')->default(true);
 
       $table->timestamps();
       $table->softDeletes();

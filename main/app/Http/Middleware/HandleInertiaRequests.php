@@ -57,7 +57,7 @@ class HandleInertiaRequests extends Middleware
         'opening_hours' => config('app.opening_hours'),
       ],
       'isInertiaRequest' => (bool)request()->header('X-Inertia'),
-      'auth' => fn (Request $request) => $request->user() ? collect($request->user())->merge(request()->user()->getUserType()) : (object)[],
+      'authuser' => fn (Request $request) => $request->user() ? collect($request->user())->merge(request()->user()->getUserType()) : (object)[],
       'flash' => fn () => Session::get('flash') ?? (object)[],
     ]);
   }

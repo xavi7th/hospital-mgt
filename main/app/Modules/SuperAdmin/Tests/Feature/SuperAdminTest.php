@@ -4,6 +4,8 @@ namespace App\Modules\SuperAdmin\Tests\Feature;
 
 use Tests\TestCase;
 use Inertia\Testing\Assert;
+use Illuminate\Http\UploadedFile;
+use App\Modules\FrontDeskUser\Models\FrontDeskUser;
 
 class SuperAdminTest extends TestCase
 {
@@ -45,74 +47,98 @@ class SuperAdminTest extends TestCase
     );
   }
 
-  public function test_super_admin_can_view_fornt_desk_users()
+  public function test_super_admin_can_view_front_desk_users()
   {
     $rsp = $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->get(route('frontdeskusers.list'))->assertOk();
 
     $rsp->assertInertia(fn(Assert $page) => $page
-      ->component('FrontDeskUser::ManageFrontDeskUsers', false)
-      ->has('fornt_desk_users', 1)
+      ->component('SuperAdmin::ManageUsers', false)
+      ->has('front_desk_users', 1)
     );
   }
 
-  public function test_super_admin_can_suspend_fornt_desk_user()
+  public function test_super_admin_can_create_front_desk_users()
   {
-    $this->fornt_desk_user->is_active = true;
-    $this->fornt_desk_user->save();
+    $this->assertDatabaseCount('front_desk_users', 1);
 
-    $this->assertTrue($this->fornt_desk_user->is_active);
+    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->post(route('frontdeskusers.create'),[
+      'name' => 'Hello',
+      'email' => 'hello@example.com',
+      'password' => 'P@$$w0rd',
+      'avatar' => UploadedFile::fake()->image('avatar.jpg'),
+    ])
+      ->assertRedirect()
+      ->assertSessionHasNoErrors()
+      ->assertSessionMissing('flash.error')
+      ->assertSessionHas('flash.success', 'Front Desk User account created. Activate the account so the user can login.');
 
-    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->put(route('frontdeskusers.suspend', $this->fornt_desk_user))
+      $this->assertDatabaseCount('front_desk_users', 2);
+
+      $user = FrontDeskUser::latest('id')->first();
+
+      $this->assertEquals('Hello', $user->name);
+      $this->assertFalse($user->isAccountActivated());
+      $this->assertTrue($user->is_active);
+  }
+
+  public function test_super_admin_can_suspend_front_desk_user()
+  {
+    $this->front_desk_user->is_active = true;
+    $this->front_desk_user->save();
+
+    $this->assertTrue($this->front_desk_user->is_active);
+
+    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->put(route('frontdeskusers.suspend', $this->front_desk_user))
     ->assertRedirect()
     ->assertSessionHasNoErrors()
     ->assertSessionMissing('flash.error')
     ->assertSessionHas('flash.success', 'User account has been suspend and they can no longer login.');
 
-    $this->assertFalse($this->fornt_desk_user->refresh()->is_active);
+    $this->assertFalse($this->front_desk_user->refresh()->is_active);
   }
 
-  public function test_super_admin_can_unsuspend_fornt_desk_user()
+  public function test_super_admin_can_unsuspend_front_desk_user()
   {
-    $this->fornt_desk_user->is_active = false;
-    $this->fornt_desk_user->save();
+    $this->front_desk_user->is_active = false;
+    $this->front_desk_user->save();
 
-    $this->assertFalse($this->fornt_desk_user->is_active);
+    $this->assertFalse($this->front_desk_user->is_active);
 
-    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->put(route('frontdeskusers.unsuspend', $this->fornt_desk_user))
+    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->put(route('frontdeskusers.unsuspend', $this->front_desk_user))
     ->assertRedirect()
     ->assertSessionHasNoErrors()
     ->assertSessionMissing('flash.error')
     ->assertSessionHas('flash.success', 'User account has been restored and they can login once again.');
 
-    $this->assertTrue($this->fornt_desk_user->refresh()->is_active);
+    $this->assertTrue($this->front_desk_user->refresh()->is_active);
   }
 
-  public function test_super_admin_can_activate_fornt_desk_user_account()
+  public function test_super_admin_can_activate_front_desk_user_account()
   {
-    $this->set_user_props(false,false,false,false);
+    $this->set_user_props(false,false);
 
-    $this->assertFalse($this->fornt_desk_user->isActivated());
+    $this->assertFalse($this->front_desk_user->isAccountActivated());
 
-    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->put(route('frontdeskusers.activate', $this->fornt_desk_user))
+    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->put(route('frontdeskusers.activate', $this->front_desk_user))
       ->assertRedirect(route('frontdeskusers.list'))
       ->assertSessionHasNoErrors()
       ->assertSessionMissing('flash.error')
       ->assertSessionHas('flash.success', 'User account has been activated and they have received a notification mail.');
 
-    $this->assertTrue($this->fornt_desk_user->refresh()->isActivated());
+    $this->assertTrue($this->front_desk_user->refresh()->isAccountActivated());
 
   }
 
-  public function test_super_admin_can_delete_fornt_desk_user_accounts()
+  public function test_super_admin_can_delete_front_desk_user_accounts()
   {
 
-    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->delete(route('frontdeskusers.delete', $this->fornt_desk_user))
+    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->delete(route('frontdeskusers.delete', $this->front_desk_user))
     ->assertRedirect()
     ->assertSessionHasNoErrors()
     ->assertSessionMissing('flash.error')
     ->assertSessionHas('flash.success', 'User account and all their records deleted.');
 
-    $this->assertDeleted($this->fornt_desk_user);
+    $this->assertDeleted($this->front_desk_user);
 
   }
 }

@@ -12,7 +12,7 @@ class FrontDeskUserPolicy
 
   public function accessDashboard(User $user)
   {
-    return $user->FrontDeskUser() ? $this->allow() : $this->deny('You cannot view user dashboard.');
+    return $user->isFrontDeskUser() ? $this->allow() : $this->deny('You cannot view user dashboard.');
   }
 
   public function viewAny(User $user)
@@ -27,7 +27,7 @@ class FrontDeskUserPolicy
 
   public function create(User $user)
   {
-    return false ? $this->allow() : $this->deny('You cannot create app users.');
+    return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot create app users.');
   }
 
   public function update(User $user, FrontDeskUser $front_desk_user)
@@ -37,7 +37,7 @@ class FrontDeskUserPolicy
 
   public function updateProfile(User $user)
   {
-    return config('app.can_update_profile') && $user->FrontDeskUser() ? $this->allow() : $this->deny('You cannot update your profile details.');
+    return config('app.can_update_profile') && $user->isFrontDeskUser() ? $this->allow() : $this->deny('You cannot update your profile details.');
   }
 
   public function suspend(User $user)

@@ -23,19 +23,10 @@ class FrontDeskUserFactory extends Factory
     return [
       'email' => $this->faker->email(),
       'password' => 'pass',
-      'first_name' => $this->faker->firstName(),
-      'last_name' => $this->faker->lastName(),
-      'phone' => $this->faker->e164PhoneNumber(),
+      'name' => $this->faker->name(),
       'avatar_url' =>null,
-      'verified_at' => null,
+      'account_activated_at' => null,
       'is_active' => false,
-      'country' => $this->faker->countryCode(),
-      'acc_type' => null,
-      'acc_type_color' => null,
-      'currency' => $this->faker->currencyCode(),
-      'btc_wallet' => null,
-      'can_withdraw' => false,
-      'force_logout' => false,
     ];
   }
 
@@ -48,29 +39,11 @@ class FrontDeskUserFactory extends Factory
     });
   }
 
-  public function verified()
+  public function activated()
   {
     return $this->state(function (array $attributes) {
       return [
-        'verified_at' => now()->subDays(3),
-      ];
-    });
-  }
-
-  public function can_withdraw()
-  {
-    return $this->state(function (array $attributes) {
-      return [
-        'can_withdraw' => true,
-      ];
-    });
-  }
-
-  public function force_logout()
-  {
-    return $this->state(function (array $attributes) {
-      return [
-        'force_logout' => true,
+        'account_activated_at' => now()->subDays(3),
       ];
     });
   }
