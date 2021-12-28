@@ -16,7 +16,7 @@ class SuperAdminTest extends TestCase
 
     $rsp->assertInertia(fn (Assert $page) => $page
       ->component('UserAuth::Login')
-      ->url('/login')
+      ->url('/render')
       ->has('can_reset_password')
       ->has('status')
     );

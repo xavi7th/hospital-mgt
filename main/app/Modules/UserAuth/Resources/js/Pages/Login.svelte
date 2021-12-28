@@ -409,8 +409,6 @@ input {
 
         <h4 class="auth-header">Create Account</h4>
 
-        <p class="uk-text-small uk-margin-remove-top uk-margin-medium-bottom">Don't have an account? <a href="{route('auth.register')}">Create Account here</a></p>
-
         <form on:submit|preventDefault|stopPropagation="{accessDashboard}">
 
           <div class="form-group"><label for="">Email</label>
@@ -420,10 +418,6 @@ input {
           <div class="form-group"><label for="">Password</label>
             <input class="form-control" name="password" placeholder="Enter your password" type="password" bind:value="{details.password}" required>
           </div>
-
-          <div class="uk-margin-small uk-width-expand text-right uk-text-small">
-            <label class="uk-align-right" for=""><a class="uk-link-reset" href="{route('auth.password.request')}">Forgot password?</a></label>
-        </div>
 
 
           <div class="buttons-w">

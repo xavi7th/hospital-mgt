@@ -6,14 +6,32 @@
 <script>
   import InertiaLink from '@inertiajs/inertia-svelte/src/InertiaLink.svelte';
   import ConfirmModal from '@miscellaneous-components/ConfirmModal.svelte';
+  import InfiniteScroll from "svelte-infinite-scroll";
   import { Inertia } from '@inertiajs/inertia';
-import { toCurrency } from '@PublicShared/helpers';
+  import { toCurrency } from '@PublicShared/helpers';
 
-  export let users = [],
+  // export let users = [],
+  //   must_verify_users = false,
+  //   can_delete_users = false;
+
+    let actionUrl, actionMethod, details={}, userDetails;
+
+  let searchTerm = "";
+
+	$: filteredList = front_desk_users.filter(item => item.name.indexOf(searchTerm) !== -1 || item.email.indexOf(searchTerm) !== -1);
+
+  export let front_desk_users = {},
     must_verify_users = false,
-    can_delete_users = false;
+    can_delete_users = false,
+    total_registered_front_desk_users = front_desk_users.length,
+    total_unverified_front_desk_users = 0;
 
-  let actionUrl, actionMethod, details={}, userDetails;
+    front_desk_users.forEach(element => {
+      if(!element.is_active){
+        total_unverified_front_desk_users++
+      }
+    });
+
 </script>
 
 <div class="grid grid-cols-12 gap-6">
@@ -28,7 +46,7 @@ import { toCurrency } from '@PublicShared/helpers';
           <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
               <div class="report-box zoom-in">
                   <div class="box p-5">
-                      <div class="text-3xl font-bold leading-8 mt-4">{2}</div>
+                      <div class="text-3xl font-bold leading-8 mt-4">{total_registered_front_desk_users}</div>
                       <div class="text-base text-gray-600 mt-4">Total Registered Clients</div>
                   </div>
               </div>
@@ -37,7 +55,7 @@ import { toCurrency } from '@PublicShared/helpers';
           <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
               <div class="report-box zoom-in">
                   <div class="box p-5">
-                      <div class="text-3xl font-bold leading-8 mt-4">{2}</div>
+                      <div class="text-3xl font-bold leading-8 mt-4">{total_unverified_front_desk_users}</div>
                       <div class="text-base text-gray-600 mt-4">Total Unverified Clients</div>
                   </div>
               </div>
@@ -62,23 +80,23 @@ import { toCurrency } from '@PublicShared/helpers';
 
 <div class="grid grid-cols-12 gap-6 mt-5">
   <div class="intro-y col-span-12 flex flex-wrap sm:flex-no-wrap items-center mt-2">
-      <div class="hidden md:block mx-auto text-gray-600">Showing 1 to 10 of 150 entries</div>
+      <div class="hidden md:block mx-auto text-gray-600">Showing 1 to 10 of {total_registered_front_desk_users} entries</div>
       <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
           <div class="w-56 relative text-gray-700 dark:text-gray-300">
-              <input type="text" class="input w-56 box pr-10 placeholder-theme-13" placeholder="Search...">
+              <input bind:value={searchTerm} type="text" class="input w-56 box pr-10 placeholder-theme-13" placeholder="Search...">
               <i class="w-4 h-4 absolute my-auto inset-y-0 mr-3 right-0" data-feather="search"></i>
           </div>
       </div>
   </div>
 
-  {#each users as user (user.id)}
+  {#each filteredList as user (user.id)}
     <div class="intro-y col-span-12 md:col-span-6">
       <div class="box">
           <div class="flex flex-col items-start p-5 border-b border-gray-200 dark:border-dark-5">
 
             <div class="">
               <div class="w-24 h-24 lg:w-12 lg:h-12 image-fit lg:mr-1 ml-5">
-                <img alt="{user.first_name}" class="rounded-full" src="{user.avatar_url || '/img/userimg.png'}">
+                <img alt="{user.name}" class="rounded-full" src="{user.avatar_url || '/img/userimg.png'}">
               </div>
 
               <div class="lg:ml-2 lg:mr-auto text-center lg:text-left mt-3 lg:mt-0">
@@ -89,13 +107,13 @@ import { toCurrency } from '@PublicShared/helpers';
                 {:else if true && ! user.has_accepted_terms}
                   <div class="w-48 h-5 flex items-center justify-center absolute top-0 right-0 text-xs text-white rounded-full bg-theme-6 font-medium -mt-2 mr-2">TERMS NOT ACCEPTED</div>
                 {/if}
-                <a href="" class="font-medium">{user.full_name}</a>
-                <div class="text-gray-600 text-xs">{user.phone}</div>
+                <InertiaLink href="" class="font-medium">{user.name.toUpperCase()}</InertiaLink>
+                <div class="text-gray-600 text-xs">{user.email}</div>
               </div>
             </div>
 
               <div class="flex flex-wrap">
-                <a href="javascript:;" data-toggle="modal" data-target="#user-details-modal" on:click="{() => userDetails = user}" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-indigo-600 text-white zoom-in" > <i class="w-3 h-3 mr-1 fill-current" data-feather="user"></i> DETAILS </a>
+                <InertiaLink href="" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-indigo-600 text-white zoom-in" > <i class="w-3 h-3 mr-1 fill-current" data-feather="user"></i> DETAILS </InertiaLink>
                 {#if user.is_verified}
                   {#if true}
                       {#if ! user.can_withdraw}
@@ -157,3 +175,5 @@ import { toCurrency } from '@PublicShared/helpers';
 </div>
 
 <ConfirmModal {actionUrl} {actionMethod} />
+
+

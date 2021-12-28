@@ -15,9 +15,29 @@ class FrontDeskUserController extends Controller
 
   public function index(Request $request)
   {
-    $this->authorize('accessDashboard', FrontDeskUser::class);
+    $this->authorize('viewAny', FrontDeskUser::class);
 
     return Inertia::render('FrontDeskUser::Dashboard')->withViewData([
+      'title' => 'Welcome',
+      'metaDesc' => ''
+    ]);
+  }
+
+  public function create(Request $request)
+  {
+    $this->authorize('viewAny', FrontDeskUser::class);
+
+    return Inertia::render('FrontDeskUser::CreateUser')->withViewData([
+      'title' => 'Welcome',
+      'metaDesc' => ''
+    ]);
+  }
+
+  public function destroy(Request $request)
+  {
+    $this->authorize('viewAny', FrontDeskUser::class);
+
+    return Inertia::render('FrontDeskUser::DeleteUser')->withViewData([
       'title' => 'Welcome',
       'metaDesc' => ''
     ]);
