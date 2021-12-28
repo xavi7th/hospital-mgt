@@ -23,11 +23,12 @@ class PatientFactory extends Factory
   {
     return [
       'email' => $this->faker->email(),
-      'password' => 'pass',
       'name' => $this->faker->name(),
+      'phone' => $this->faker->phoneNumber(),
       'avatar_url' => $this->faker->imageUrl(),
       'date_of_birth' => $this->faker->dateTimeThisCentury(),
       'next_of_kin' => $this->faker->name(),
+      'next_of_kin_phone' => $this->faker->e164PhoneNumber(),
     ];
   }
 }

@@ -26,12 +26,18 @@ class PatientController extends Controller
     {
       $patient = $request->createPatientRecord();
 
-      return redirect()->route('patients.show')->withFlash(['success' => 'Patient record created. You can now schedule appointments for this patient.']);
+      return redirect()->route('patients.index')->withFlash(['success' => 'Patient record created. You can now schedule appointments for this patient.']);
     }
 
-    public function show($id)
+    public function show(Patient $patient)
     {
-        return view('patient::show');
+      return inertia('FrontDeskUser::PatientDetails',[
+        'patient' => $patient->load('appointments.case_note'),
+        'pending_appointment' => $patient->pending_appointment->load(['doctor', 'booked_by'])
+      ])->withViewData([
+        'title' => 'List of Patients',
+        'meta' =>''
+      ]);
     }
 
     public function edit($id)

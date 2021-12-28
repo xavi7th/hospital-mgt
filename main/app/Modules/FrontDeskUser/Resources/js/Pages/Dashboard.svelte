@@ -4,7 +4,6 @@
 </script>
 
 <script>
-  import ForexChart from '@miscellaneous-components/ForexChart.svelte';
   import Modal from '@miscellaneous-components/Modal.svelte';
   import { to_currency } from '@miscellaneous-shared/utils';
   import { page } from '@inertiajs/inertia-svelte';
@@ -35,9 +34,6 @@
 
 <div class="grid grid-cols-12 gap-6">
   <div class="col-span-12 xxl:col-span-9 grid grid-cols-12 gap-6">
-      <div class="col-span-12 mt-8">
-        <ForexChart chart_data={forex_charts.ticker_bar_dark} />
-      </div>
 
       <div class="col-span-12 mt-8">
           <div class="intro-y flex items-center h-10">

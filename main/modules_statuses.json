@@ -4,5 +4,8 @@
     "FrontDeskUser": true,
     "Miscellaneous": true,
     "SuperAdmin": true,
-    "Patient": true
+    "Patient": true,
+    "Appointment": true,
+    "Doctor": true,
+    "CaseNote": true
 }

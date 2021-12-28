@@ -5,6 +5,7 @@ namespace App\Modules\FrontDeskUser\Http\Controllers;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Modules\Appointment\Models\Appointment;
 use App\Modules\FrontDeskUser\Models\FrontDeskUser;
 use App\Modules\FrontDeskUser\Notifications\AccountActivated;
 use App\Modules\FrontDeskUser\Transformers\FrontDeskUserTransformer;
@@ -17,7 +18,9 @@ class FrontDeskUserController extends Controller
   {
     $this->authorize('accessDashboard', FrontDeskUser::class);
 
-    return Inertia::render('FrontDeskUser::Dashboard')->withViewData([
+    return Inertia::render('FrontDeskUser::Dashboard', [
+      'due_appointments' => Appointment::notPosted()->due()->get()
+    ])->withViewData([
       'title' => 'Welcome',
       'metaDesc' => ''
     ]);

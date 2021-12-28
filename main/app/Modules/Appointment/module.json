@@ -1,0 +1,13 @@
+{
+    "name": "Appointment",
+    "alias": "appointment",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\Appointment\\Providers\\AppointmentServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

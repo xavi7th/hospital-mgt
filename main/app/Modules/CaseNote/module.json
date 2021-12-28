@@ -1,0 +1,13 @@
+{
+    "name": "CaseNote",
+    "alias": "casenote",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\CaseNote\\Providers\\CaseNoteServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
