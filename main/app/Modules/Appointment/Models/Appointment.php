@@ -2,6 +2,7 @@
 
 namespace App\Modules\Appointment\Models;
 
+use App\Modules\Nurse\Models\Nurse;
 use App\Modules\Doctor\Models\Doctor;
 use App\Modules\Patient\Models\Patient;
 use Illuminate\Database\Eloquent\Model;
@@ -37,6 +38,11 @@ class Appointment extends Model
   public function booked_by()
   {
     return $this->belongsTo(FrontDeskUser::class, 'front_desk_user_id', 'id');
+  }
+
+  public function posted_by()
+  {
+    return $this->belongsTo(Nurse::class, 'nurse_id', 'id');
   }
 
   public function case_note()

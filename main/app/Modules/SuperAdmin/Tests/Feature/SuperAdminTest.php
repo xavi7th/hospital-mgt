@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Inertia\Testing\Assert;
 use Illuminate\Http\UploadedFile;
 use App\Modules\FrontDeskUser\Models\FrontDeskUser;
+use App\Modules\Nurse\Models\Nurse;
 
 class SuperAdminTest extends TestCase
 {
@@ -139,6 +140,106 @@ class SuperAdminTest extends TestCase
     ->assertSessionHas('flash.success', 'User account and all their records deleted.');
 
     $this->assertDeleted($this->front_desk_user);
+
+  }
+
+  public function test_super_admin_can_view_nurses()
+  {
+    Nurse::factory()->count(20)->create();
+
+    $rsp = $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->get(route('nurses.index'))->assertOk();
+
+    $rsp->assertInertia(fn(Assert $page) => $page
+      ->component('SuperAdmin::ManageUsers', false)
+
+      ->has('nurses', 20, fn($page) => $page
+        ->missing('created_at')
+        ->etc()
+      )
+    );
+  }
+
+  public function test_super_admin_can_create_nurses()
+  {
+    $this->assertDatabaseCount('nurses', 0);
+
+    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->post(route('nurses.create'),[
+      'name' => 'Hello',
+      'email' => 'hello@example.com',
+      'password' => 'P@$$w0rd',
+      'avatar' => UploadedFile::fake()->image('avatar.jpg'),
+    ])
+      ->assertRedirect()
+      ->assertSessionHasNoErrors()
+      ->assertSessionMissing('flash.error')
+      ->assertSessionHas('flash.success', 'Nurse account created. Activate the account so the user can login.');
+
+      $this->assertDatabaseCount('nurses', 1);
+
+      $user = Nurse::latest('id')->first();
+
+      $this->assertEquals('Hello', $user->name);
+      $this->assertFalse($user->isAccountActivated());
+      $this->assertTrue($user->is_active);
+  }
+
+  public function test_super_admin_can_suspend_nurse()
+  {
+    $nurse = Nurse::factory()->active()->create();
+
+    $this->assertTrue($nurse->is_active);
+
+    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->put(route('nurses.suspend', $nurse))
+    ->assertRedirect()
+    ->assertSessionHasNoErrors()
+    ->assertSessionMissing('flash.error')
+    ->assertSessionHas('flash.success', 'User account has been suspend and they can no longer login.');
+
+    $this->assertFalse($nurse->refresh()->is_active);
+  }
+
+  public function test_super_admin_can_unsuspend_nurse()
+  {
+    $nurse = Nurse::factory()->create();
+
+    $this->assertFalse($nurse->is_active);
+
+    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->put(route('nurses.unsuspend', $nurse))
+    ->assertRedirect()
+    ->assertSessionHasNoErrors()
+    ->assertSessionMissing('flash.error')
+    ->assertSessionHas('flash.success', 'User account has been restored and they can login once again.');
+
+    $this->assertTrue($nurse->refresh()->is_active);
+  }
+
+  public function test_super_admin_can_activate_nurse_account()
+  {
+    $nurse = Nurse::factory()->create();
+
+    $this->assertFalse($nurse->isAccountActivated());
+
+    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->put(route('nurses.activate', $nurse))
+      ->assertRedirect(route('nurses.index'))
+      ->assertSessionHasNoErrors()
+      ->assertSessionMissing('flash.error')
+      ->assertSessionHas('flash.success', 'User account has been activated and they have received a notification mail.');
+
+    $this->assertTrue($nurse->refresh()->isAccountActivated());
+
+  }
+
+  public function test_super_admin_can_delete_nurse_accounts()
+  {
+    $nurse = Nurse::factory()->create();
+
+    $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->delete(route('nurses.delete', $nurse))
+    ->assertRedirect()
+    ->assertSessionHasNoErrors()
+    ->assertSessionMissing('flash.error')
+    ->assertSessionHas('flash.success', 'User account and all their records deleted.');
+
+    $this->assertDeleted($nurse);
 
   }
 }

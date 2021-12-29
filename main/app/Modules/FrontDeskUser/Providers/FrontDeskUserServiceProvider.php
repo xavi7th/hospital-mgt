@@ -4,8 +4,6 @@ namespace App\Modules\FrontDeskUser\Providers;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
-use App\Modules\FrontDeskUser\Http\Middleware\OnlyActiveFrontDeskUsers;
-use App\Modules\FrontDeskUser\Http\Middleware\OnlyFrontDeskUsersWhoHaveBeenActivated;
 
 class FrontDeskUserServiceProvider extends ServiceProvider
 {
@@ -40,9 +38,6 @@ class FrontDeskUserServiceProvider extends ServiceProvider
   public function register()
   {
     $this->app->register(RouteServiceProvider::class);
-
-    app()->make('router')->aliasMiddleware('active', OnlyActiveFrontDeskUsers::class);
-    app()->make('router')->aliasMiddleware('activated', OnlyFrontDeskUsersWhoHaveBeenActivated::class);
   }
 
   /**

@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Modules\FrontDeskUser\Transformers;
+namespace App\Modules\SuperAdmin\Transformers;
 
-use Str;
-use App\Modules\FrontDeskUser\Models\FrontDeskUser;
+use App\Models\User;
 
-class FrontDeskUserTransformer
+class StaffTransformer
 {
   public function collectionTransformer($collection, $transformerMethod)
   {
@@ -34,7 +33,7 @@ class FrontDeskUserTransformer
     }
   }
 
-  public function transformForFrontDeskUser(FrontDeskUser $user)
+  public function transform(User $user)
   {
     return [
       'id' => (int)$user->id,

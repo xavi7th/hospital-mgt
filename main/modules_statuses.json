@@ -7,5 +7,6 @@
     "Patient": true,
     "Appointment": true,
     "Doctor": true,
-    "CaseNote": true
+    "CaseNote": true,
+    "Nurse": true
 }

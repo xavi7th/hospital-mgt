@@ -6,6 +6,7 @@ use App\Modules\Doctor\Models\Doctor;
 use App\Modules\Patient\Models\Patient;
 use App\Modules\Appointment\Models\Appointment;
 use App\Modules\FrontDeskUser\Models\FrontDeskUser;
+use App\Modules\Nurse\Models\Nurse;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AppointmentFactory extends Factory
@@ -28,8 +29,10 @@ class AppointmentFactory extends Factory
       'patient_id' => null,
       'doctor_id' => null,
       'front_desk_user_id' => null,
+      'nurse_id' => null,
       'appointment_date' => $this->faker->dateTimeBetween('now', '+3 months'),
-      'fulfilled_at' => null
+      'fulfilled_at' => null,
+      'posted_at' => null,
     ];
   }
 
@@ -51,6 +54,15 @@ class AppointmentFactory extends Factory
     });
   }
 
+  public function with_nurse()
+  {
+    return $this->state(function (array $attributes) {
+      return [
+        'nurse_id' => Nurse::factory()->create()->id,
+      ];
+    });
+  }
+
   public function with_front_desk_user()
   {
     return $this->state(function (array $attributes) {
@@ -65,6 +77,16 @@ class AppointmentFactory extends Factory
     return $this->state(function (array $attributes) {
       return [
         'fulfilled_at' => $this->faker->dateTimeThisMonth('now'),
+      ];
+    });
+  }
+
+  public function posted($nurse_id = null)
+  {
+    return $this->state(function (array $attributes) use($nurse_id) {
+      return [
+        'posted_at' => $this->faker->dateTimeThisMonth('now'),
+        'nurse_id' => $nurse_id
       ];
     });
   }

@@ -7,9 +7,10 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Modules\Appointment\Models\Appointment;
 use App\Modules\FrontDeskUser\Models\FrontDeskUser;
+use App\Modules\SuperAdmin\Transformers\StaffTransformer;
+use App\Modules\SuperAdmin\Http\Requests\CreateUserRequest;
 use App\Modules\FrontDeskUser\Notifications\AccountActivated;
 use App\Modules\FrontDeskUser\Transformers\FrontDeskUserTransformer;
-use App\Modules\SuperAdmin\Http\Requests\CreateUserRequest;
 
 class FrontDeskUserController extends Controller
 {
@@ -54,7 +55,7 @@ class FrontDeskUserController extends Controller
     $this->authorize('viewAny', FrontDeskUser::class);
 
     return Inertia::render('SuperAdmin::ManageUsers', [
-      'front_desk_users' => (new FrontDeskUserTransformer)->collectionTransformer(FrontDeskUser::latest()->get(), 'transformForFrontDeskUser'),
+      'front_desk_users' => (new StaffTransformer)->collectionTransformer(FrontDeskUser::latest()->get(), 'transform'),
     ])->withViewData([
       'title' => 'View App Users',
     ]);

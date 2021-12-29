@@ -2,7 +2,6 @@
 
 namespace App\Modules\SuperAdmin\Http\Requests;
 
-use App\Modules\FrontDeskUser\Models\FrontDeskUser;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 

@@ -2,11 +2,12 @@
 
 namespace App\Modules\Doctor\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Modules\Doctor\Database\factories\DoctorFactory;
 
-class Doctor extends Model
+class Doctor extends User
 {
   use HasFactory;
 

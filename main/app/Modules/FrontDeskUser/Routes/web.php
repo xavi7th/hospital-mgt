@@ -6,10 +6,6 @@ use App\Modules\FrontDeskUser\Models\FrontDeskUser;
 
 Route::prefix(FrontDeskUser::DASHBOARD_ROUTE_PREFIX)->name(FrontDeskUser::ROUTE_NAME_PREFIX)->group(function () {
 
-  Route::middleware(['auth', 'verified'])->name('activation.')->group(function () {
-    Route::get('activation-pending', [FrontDeskUserController::class,'activationPending'])->name('pending');
-  });
-
   Route::middleware(['auth', 'activated', 'active'])->group(function () {
     Route::get('dashboard', [FrontDeskUserController::class,'index'])->name('dashboard')->defaults('menu', __e('Dashboard', 'accessDashboard,' . FrontDeskUser::class, 'home', 1, false, null, 1));
     if (config('app.can_update_profile')) {

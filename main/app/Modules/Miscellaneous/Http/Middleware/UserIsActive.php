@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Modules\FrontDeskUser\Http\Middleware;
+namespace App\Modules\Miscellaneous\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
 
-class OnlyActiveFrontDeskUsers
+class UserIsActive
 {
   /**
    * Handle an incoming request.
@@ -16,7 +16,7 @@ class OnlyActiveFrontDeskUsers
    */
   public function handle(Request $request, Closure $next)
   {
-    if ($request->user()->isFrontDeskUser() && ! $request->user()->is_active) {
+    if (! $request->user()->is_active) {
 
       $request->user()->logout();
 

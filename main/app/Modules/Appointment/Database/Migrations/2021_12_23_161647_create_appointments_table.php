@@ -19,6 +19,7 @@ class CreateAppointmentsTable extends Migration
       $table->foreignId('doctor_id');
       $table->foreignId('front_desk_user_id');
       $table->timestamp('appointment_date');
+      $table->foreignId('nurse_id')->nullable();
       $table->timestamp('posted_at')->nullable();
       $table->timestamp('fulfilled_at')->nullable();
 
