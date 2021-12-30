@@ -6,15 +6,10 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Modules\Patient\Models\Patient;
-use Illuminate\Contracts\Support\Renderable;
 use App\Modules\Appointment\Models\Appointment;
 
 class AppointmentController extends Controller
 {
-  /**
-   * Display a listing of the resource.
-   * @return Renderable
-   */
   public function index(string $date = null)
   {
     return inertia('Appointment::AppointmentList', [
@@ -25,20 +20,6 @@ class AppointmentController extends Controller
     ]);
   }
 
-  /**
-   * Show the form for creating a new resource.
-   * @return Renderable
-   */
-  public function create()
-  {
-    return view('appointment::create');
-  }
-
-  /**
-   * Store a newly created resource in storage.
-   * @param Request $request
-   * @return Renderable
-   */
   public function store(Request $request, Patient $patient)
   {
     $this->authorize('create', Appointment::class);
@@ -57,42 +38,6 @@ class AppointmentController extends Controller
     return redirect()->route('patients.show', $patient)->withFlash(['success' => 'Patient appointment booked. The assigned doctor will see the appointment in his schedule.']);
   }
 
-  /**
-   * Show the specified resource.
-   * @param int $id
-   * @return Renderable
-   */
-  public function show($id)
-  {
-    return view('appointment::show');
-  }
-
-  /**
-   * Show the form for editing the specified resource.
-   * @param int $id
-   * @return Renderable
-   */
-  public function edit($id)
-  {
-    return view('appointment::edit');
-  }
-
-  /**
-   * Update the specified resource in storage.
-   * @param Request $request
-   * @param int $id
-   * @return Renderable
-   */
-  public function update(Request $request, $id)
-  {
-    //
-  }
-
-  /**
-   * Remove the specified resource from storage.
-   * @param int $id
-   * @return Renderable
-   */
   public function destroy(Appointment $appointment)
   {
     $this->authorize('delete', $appointment);

@@ -11,7 +11,7 @@ class Vitals extends Model
   use HasFactory;
 
   protected $fillable = ['nurse_id', 'appointment_id', 'vitals',];
-  protected $casts = ['vitals' => 'object'];
+  protected $casts = ['vitals' => 'object', 'nurse_id' => 'int', 'appointment_id' => 'int'];
 
   protected static function newFactory()
   {
