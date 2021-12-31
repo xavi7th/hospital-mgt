@@ -76,7 +76,7 @@ class FrontDeskUserTest extends TestCase
   {
     $patient = Patient::factory()->create();
     $doctor = Doctor::factory()->create();
-    Appointment::factory()->fulfilled()->count(10)->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'front_desk_user_id' => $this->front_desk_user->id]);
+    Appointment::factory()->discharged()->count(10)->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'front_desk_user_id' => $this->front_desk_user->id]);
     Appointment::factory()->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'front_desk_user_id' => $this->front_desk_user->id]);
 
     $rsp = $this->actingAs($this->front_desk_user, $this->getAuthGuard($this->front_desk_user))->get(route('patients.show', $patient))->assertOk();
@@ -103,7 +103,7 @@ class FrontDeskUserTest extends TestCase
   {
     $patient = Patient::factory()->create();
     $doctor = Doctor::factory()->create();
-    Appointment::factory()->fulfilled()->count(10)->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'front_desk_user_id' => $this->front_desk_user->id]);
+    Appointment::factory()->discharged()->count(10)->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'front_desk_user_id' => $this->front_desk_user->id]);
     $appointment = Appointment::factory()->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'front_desk_user_id' => $this->front_desk_user->id]);
 
     $this->actingAs($this->front_desk_user, $this->getAuthGuard($this->front_desk_user))->delete(route('appointments.delete', $appointment))
@@ -115,11 +115,11 @@ class FrontDeskUserTest extends TestCase
     $this->assertDeleted($appointment);
   }
 
-  public function test_front_desk_users_cannot_delete_a_fulfilled_patient_appointment()
+  public function test_front_desk_users_cannot_delete_a_posted_patient_appointment()
   {
     $patient = Patient::factory()->create();
     $doctor = Doctor::factory()->create();
-    $appointment = Appointment::factory()->fulfilled()->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'front_desk_user_id' => $this->front_desk_user->id]);
+    $appointment = Appointment::factory()->discharged()->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'front_desk_user_id' => $this->front_desk_user->id]);
 
     $this->actingAs($this->front_desk_user, $this->getAuthGuard($this->front_desk_user))->delete(route('appointments.delete', $appointment))
         ->assertStatus(403);
@@ -205,7 +205,7 @@ class FrontDeskUserTest extends TestCase
         ->where('booked_by.name', $this->front_desk_user->name)
         ->where('appointment_date', fn($dt) => Carbon::parse($dt)->isSameDay(Carbon::parse($date)))
         ->has('patient')
-        ->where('fulfilled_at', null)
+        ->where('discharged_at', null)
         ->etc()
       )
     );

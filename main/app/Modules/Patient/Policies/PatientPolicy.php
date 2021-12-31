@@ -20,6 +20,11 @@ class PatientPolicy
     return $user->isNurse() ? $this->allow() : $this->deny('You cannot view take patients vital signs.');
   }
 
+  public function chartPatientSymptoms(User $user)
+  {
+    return $user->isDoctor() ? $this->allow() : $this->deny('You cannot view take see patients.');
+  }
+
   public function view(User $user, Patient $patient)
   {
     return false ? $this->allow() : $this->deny('You cannot view this patient\'s details.');

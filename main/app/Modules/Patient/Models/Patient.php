@@ -20,9 +20,9 @@ class Patient extends Model
     return $this->hasMany(Appointment::class);
   }
 
-  public function completed_appointments()
+  public function past_appointments()
   {
-    return $this->hasMany(Appointment::class)->fulfilled();
+    return $this->hasMany(Appointment::class)->discharged();
   }
 
   public function pending_appointment()

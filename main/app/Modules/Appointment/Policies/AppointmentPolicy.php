@@ -32,7 +32,7 @@ class AppointmentPolicy
 
   public function delete(User $user, Appointment $appointment)
   {
-    return $user->isFrontDeskUser() && is_null($appointment->fulfilled_at) ? $this->allow() : $this->deny('You cannot create appointments.');
+    return $user->isFrontDeskUser() && is_null($appointment->nurse_id) ? $this->allow() : $this->deny('You cannot delete this appointment.');
   }
 
 }

@@ -2,15 +2,12 @@
 
 namespace App\Modules\Nurse\Tests\Feature;
 
-use Carbon\Carbon;
 use Tests\TestCase;
 use Inertia\Testing\Assert;
-use Illuminate\Http\UploadedFile;
 use App\Modules\Nurse\Models\Nurse;
 use App\Modules\Nurse\Models\Vitals;
 use App\Modules\Doctor\Models\Doctor;
 use App\Modules\Patient\Models\Patient;
-use Illuminate\Database\Eloquent\Model;
 use App\Modules\Appointment\Models\Appointment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -89,7 +86,7 @@ class NurseTest extends TestCase
             ->has('doctor')
             ->where('posted_at', fn ($v) => !is_null($v))
             ->where('nurse_id', fn ($v) => is_null($v))
-            ->where('fulfilled_at', fn ($v) => is_null($v))
+            ->where('discharged_at', fn ($v) => is_null($v))
             ->etc()
         )
     );
@@ -119,7 +116,7 @@ class NurseTest extends TestCase
         'appointment_date' => now()->subHours(5),
         'posted_at' => now(),
         'nurse_id' => $nurse->id,
-        'fulfilled_at' => now(),
+        'discharged_at' => now(),
       ]);
     }
 
@@ -137,7 +134,7 @@ class NurseTest extends TestCase
               'appointments',
               fn ($page) => $page
                 ->has('0.doctor')
-                ->has('0.posted_by')
+                ->has('0.nurse')
                 ->has('0.case_notes')
                 ->etc()
             )
@@ -151,7 +148,7 @@ class NurseTest extends TestCase
   {
     $patient = Patient::factory()->create();
     $doctor = Doctor::factory()->create();
-    Appointment::factory()->fulfilled()->count(10)->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'nurse_id' => $nurse->id]);
+    Appointment::factory()->discharged()->count(10)->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'nurse_id' => $nurse->id]);
     Appointment::factory()->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'nurse_id' => $nurse->id]);
 
     $rsp = $this->actingAs($nurse, $this->getAuthGuard($nurse))->get(route('appointments.case_notes', $appointment))->assertOk();
@@ -200,6 +197,8 @@ class NurseTest extends TestCase
 
     $this->actingAs($nurse, $this->getAuthGuard($nurse));
 
+    $this->assertNull($appointment->nurse);
+
     $this->post(route('appointments.vitals.create', $appointment), ['vitals' => ['temp' => $this->faker->randomNumber(), 'height' => $this->faker->randomNumber(), 'weight' => $this->faker->randomNumber()]])
       ->assertRedirect()
       ->assertSessionHasNoErrors()
@@ -210,5 +209,6 @@ class NurseTest extends TestCase
     $this->assertTrue($patient->vital_signs->first()->is($appointment->vital_signs->first()));
 
     $this->assertDatabaseCount('vitals', 1);
+    $this->assertTrue($appointment->refresh()->nurse->is($nurse));
   }
 }

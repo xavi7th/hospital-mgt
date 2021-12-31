@@ -21,7 +21,7 @@ class CreateAppointmentsTable extends Migration
       $table->timestamp('appointment_date');
       $table->foreignId('nurse_id')->nullable();
       $table->timestamp('posted_at')->nullable();
-      $table->timestamp('fulfilled_at')->nullable();
+      $table->timestamp('discharged_at')->nullable();
 
       $table->timestamps();
     });

@@ -3,7 +3,7 @@
 namespace App\Modules\Doctor\Models;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use App\Modules\Appointment\Models\Appointment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Modules\Doctor\Database\factories\DoctorFactory;
 
@@ -20,5 +20,10 @@ class Doctor extends User
   protected static function newFactory()
   {
     return DoctorFactory::new();
+  }
+
+  public function appointments()
+  {
+    return $this->hasMany(Appointment::class);
   }
 }

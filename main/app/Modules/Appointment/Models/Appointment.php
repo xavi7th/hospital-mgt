@@ -19,7 +19,7 @@ class Appointment extends Model
 
   protected $fillable = ['patient_id', 'doctor_id', 'appointment_date', 'front_desk_user_id'];
   protected $casts = ['patient_id' => 'int', 'doctor_id' => 'int', 'nurse_id' => 'int'];
-  protected $dates = ['appointment_date', 'fulfilled_at', 'posted_at'];
+  protected $dates = ['appointment_date', 'discharged_at', 'posted_at'];
 
   protected static function newFactory()
   {
@@ -46,9 +46,9 @@ class Appointment extends Model
     return $this->belongsTo(FrontDeskUser::class, 'front_desk_user_id', 'id');
   }
 
-  public function posted_by()
+  public function nurse()
   {
-    return $this->belongsTo(Nurse::class, 'nurse_id', 'id');
+    return $this->belongsTo(Nurse::class);
   }
 
   public function case_notes()
@@ -68,12 +68,12 @@ class Appointment extends Model
 
   public function scopePending(Builder $query)
   {
-    return $query->whereNull('fulfilled_at');
+    return $query->whereNull('discharged_at');
   }
 
-  public function scopeFulfilled(Builder $query)
+  public function scopeDischarged(Builder $query)
   {
-    return $query->whereNotNull('fulfilled_at');
+    return $query->whereNotNull('discharged_at');
   }
 
   public function scopeNotPosted(Builder $query)
@@ -99,5 +99,10 @@ class Appointment extends Model
   public function scopeDue(Builder $query)
   {
     return $query->whereDate('appointment_date', today())->whereYear('appointment_date', today());
+  }
+
+  public function scopePostedToday(Builder $query)
+  {
+    return $query->whereNotNull('posted_at')->whereDate('posted_at', today())->whereYear('posted_at', today());
   }
 }

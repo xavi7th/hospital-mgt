@@ -14,10 +14,6 @@ use App\Modules\SuperAdmin\Http\Requests\CreateUserRequest;
 
 class NurseController extends Controller
 {
-  /**
-   * Display a listing of the resource.
-   * @return Renderable
-   */
   public function index()
   {
     $this->authorize('accessDashboard', Nurse::class);
@@ -29,7 +25,6 @@ class NurseController extends Controller
       'metaDesc' => ''
     ]);
   }
-
 
   public function getAllNurses(Request $request)
   {

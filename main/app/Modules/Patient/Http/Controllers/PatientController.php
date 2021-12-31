@@ -5,6 +5,7 @@ namespace App\Modules\Patient\Http\Controllers;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
 use App\Modules\Patient\Models\Patient;
 use App\Modules\Patient\Http\Requests\CreatePatientRequest;
 
@@ -14,13 +15,14 @@ class PatientController extends Controller
   {
     $patients = collect([]);
 
-    if ($request->user()->isFrontDeskUser()) {
-      $this->authorize('viewAny', Patient::class);
+    if (Gate::allows('viewAny', Patient::class)) {
       $patients = Patient::all();
     }
-    elseif ($request->user()->isNurse()) {
-      $this->authorize('takePatientsVitals', Patient::class);
-      $patients = Patient::with(['appointments' => fn($q) => $q->fulfilled()->vitalsTaken()->posted(), 'appointments.case_notes', 'appointments.doctor', 'appointments.posted_by'])->whereHas('appointments', fn($q) => $q->fulfilled()->vitalsTaken()->posted())->get();
+    elseif (Gate::allows('takePatientsVitals', Patient::class) || Gate::allows('chartPatientSymptoms', Patient::class)) {
+      $patients = Patient::with(['appointments' => fn($q) => $q->vitalsTaken()->pending()->posted(), 'appointments.case_notes', 'appointments.doctor', 'appointments.nurse'])->whereHas('appointments', fn($q) => $q->vitalsTaken()->pending()->posted())->get();
+    }
+    else{
+      abort(403, 'You are not allowed to view patient\'s list');
     }
 
     return Inertia::render('Patient::PatientList', [
@@ -47,20 +49,5 @@ class PatientController extends Controller
       'title' => 'List of Patients',
       'meta' => ''
     ]);
-  }
-
-  public function edit($id)
-  {
-    return view('patient::edit');
-  }
-
-  public function update(Request $request, $id)
-  {
-    //
-  }
-
-  public function destroy($id)
-  {
-    //
   }
 }

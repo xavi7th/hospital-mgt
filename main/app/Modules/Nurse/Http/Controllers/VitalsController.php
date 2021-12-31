@@ -27,6 +27,9 @@ class VitalsController extends Controller
       'vitals' => ['required', 'array'],
     ]);
 
+    $appointment->nurse_id = $request->user()->id;
+    $appointment->save();
+
     $appointment->vital_signs()->create([
       'nurse_id' => $request->user()->id,
       'vitals' => $request->vitals,

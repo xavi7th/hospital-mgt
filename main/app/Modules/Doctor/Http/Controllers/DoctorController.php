@@ -2,78 +2,86 @@
 
 namespace App\Modules\Doctor\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
+use Inertia\Inertia;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\Controller;
+use App\Modules\Doctor\Models\Doctor;
+use App\Modules\SuperAdmin\Transformers\StaffTransformer;
+use App\Modules\SuperAdmin\Notifications\AccountActivated;
+use App\Modules\SuperAdmin\Http\Requests\CreateUserRequest;
 
 class DoctorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
-    public function index()
-    {
-        return view('doctor::index');
-    }
+  public function index(Request $request)
+  {
+    $this->authorize('accessDashboard', Doctor::class);
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create()
-    {
-        return view('doctor::create');
-    }
+    return Inertia::render('Doctor::Dashboard', [
+      'appointments' => $request->user()->appointments()->with(['nurse', 'patient', 'case_notes'])->pending()->postedToday()->vitalsTaken()->get()
+    ])->withViewData([
+      'title' => 'Welcome',
+      'metaDesc' => ''
+    ]);
+  }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+  public function getAllDoctors(Request $request)
+  {
+    $this->authorize('viewAny', Doctor::class);
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
-    {
-        return view('doctor::show');
-    }
+    return Inertia::render('SuperAdmin::ManageUsers', [
+      'doctors' => (new StaffTransformer)->collectionTransformer(Doctor::latest()->get(), 'transform'),
+    ])->withViewData([
+      'title' => 'View App Users',
+    ]);
+  }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
-    {
-        return view('doctor::edit');
-    }
+  public function store(CreateUserRequest $request)
+  {
+    $this->authorize('create', Doctor::class);
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+    $request->createUser(Doctor::class);
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    return redirect()->route('doctors.index')->withFlash(['success' => 'Doctor account created. Activate the account so the user can login.']);
+  }
+
+  public function suspend(Request $request, Doctor $doctor)
+  {
+    $this->authorize('suspend', $doctor);
+
+    $doctor->is_active = false;
+    $doctor->save();
+
+    return redirect()->route('doctors.index')->withFlash(['success' => 'User account has been suspend and they can no longer login.']);
+  }
+
+  public function unsuspend(Request $request, Doctor $doctor)
+  {
+    $this->authorize('suspend', $doctor);
+
+    $doctor->is_active = true;
+    $doctor->save();
+
+    return redirect()->route('doctors.index')->withFlash(['success' => 'User account has been restored and they can login once again.']);
+  }
+
+  public function activate(Request $request, Doctor $doctor)
+  {
+
+    $this->authorize('activate', $doctor);
+
+    $doctor->account_activated_at = now();
+    $doctor->save();
+
+    $doctor->notify(new AccountActivated);
+
+    return redirect()->route('doctors.index')->withFlash(['success' => 'User account has been activated and they have received a notification mail.']);
+  }
+
+  public function delete(Request $request, Doctor $doctor)
+  {
+    $this->authorize('delete', $doctor);
+
+    $doctor->forceDelete();
+    return redirect()->route('doctors.index')->withFlash(['success' => 'User account and all their records deleted.']);
+  }
 }

@@ -8,9 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Modules\Appointment\Models\Appointment;
 use App\Modules\FrontDeskUser\Models\FrontDeskUser;
 use App\Modules\SuperAdmin\Transformers\StaffTransformer;
+use App\Modules\SuperAdmin\Notifications\AccountActivated;
 use App\Modules\SuperAdmin\Http\Requests\CreateUserRequest;
-use App\Modules\FrontDeskUser\Notifications\AccountActivated;
-use App\Modules\FrontDeskUser\Transformers\FrontDeskUserTransformer;
 
 class FrontDeskUserController extends Controller
 {
@@ -48,7 +47,6 @@ class FrontDeskUserController extends Controller
 
     return redirect()->route('frontdeskusers.profile')->withFlash(['success' => 'Profile image updated.']);
   }
-
 
   public function getAllFrontDeskUsers(Request $request)
   {

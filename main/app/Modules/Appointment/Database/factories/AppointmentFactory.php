@@ -31,7 +31,7 @@ class AppointmentFactory extends Factory
       'front_desk_user_id' => null,
       'nurse_id' => null,
       'appointment_date' => $this->faker->dateTimeBetween('now', '+3 months'),
-      'fulfilled_at' => null,
+      'discharged_at' => null,
       'posted_at' => null,
     ];
   }
@@ -72,11 +72,11 @@ class AppointmentFactory extends Factory
     });
   }
 
-  public function fulfilled()
+  public function discharged()
   {
     return $this->state(function (array $attributes) {
       return [
-        'fulfilled_at' => $this->faker->dateTimeThisMonth('now'),
+        'discharged_at' => $this->faker->dateTimeThisMonth('now'),
       ];
     });
   }
