@@ -7,7 +7,6 @@ var path = require('path');
 
 require('laravel-mix-imagemin');
 require('laravel-mix-svelte');
-require('laravel-mix-bundle-analyzer');
 require('laravel-mix-purgecss');
 
 let fs = require('fs-extra');
@@ -71,10 +70,6 @@ mix
 			// 	cssDeclarationSorter: true
 			// })
     ],
-    //  hmrOptions: {
-    //  	host: siteUrl,
-    //  	port: 8081 // Can't use 443 here because address already in use
-    //  }
 	})
 	.svelte({
 		dev: !mix.inProduction(),
@@ -187,11 +182,6 @@ mix
 		fs.writeFileSync('./public_html/mix-manifest.json', data);
 	})
 
-if (!mix.inProduction()) {
+// if (!mix.inProduction()) {
 	mix.sourceMaps();
-	// mix.bundleAnalyzer();
-}
-
-if (mix.inProduction()) {
-	// mix.bundleAnalyzer();
-}
+// }

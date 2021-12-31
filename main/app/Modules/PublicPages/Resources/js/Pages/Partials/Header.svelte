@@ -1,10 +1,7 @@
 <script>
-  import { InertiaLink, inertia, page } from '@inertiajs/inertia-svelte';
-  import ForexChart from '@miscellaneous-components/ForexChart.svelte';
+  import { InertiaLink, page } from '@inertiajs/inertia-svelte';
 
   export let routes = [];
-
-  $: ({ can_request_alt_deposits } = $page.props);
 </script>
 
 <header class="header header-sticky default">
@@ -31,14 +28,8 @@
           </li>
         {/if}
       {/each}
-      {#if can_request_alt_deposits}
-        <a use:inertia href="{route('bitcoinpurchaserequests.show')}" class="nav-link">Buy Bitcoin</a>
-      {/if}
       <li class="nav-item  d-xl-none d-xxl-none d-lg-none">
         <a class="nav-link" href="{route('auth.login')}">Login</a>
-      </li>
-      <li class="nav-item  d-xl-none d-xxl-none d-lg-none">
-        <a class="nav-link" href="{route('auth.register')}">Register</a>
       </li>
     </ul>
 

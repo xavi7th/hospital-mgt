@@ -65,7 +65,7 @@ class FrontDeskUserController extends Controller
 
     $request->createUser(FrontDeskUser::class);
 
-    return redirect()->route('frontdeskusers.list')->withFlash(['success' => 'Front Desk User account created. Activate the account so the user can login.']);
+    return redirect()->route('frontdeskusers.index')->withFlash(['success' => 'Front Desk User account created. Activate the account so the user can login.']);
   }
 
   public function suspendFrontDeskUser(Request $request, FrontDeskUser $front_desk_user)
@@ -75,7 +75,7 @@ class FrontDeskUserController extends Controller
     $front_desk_user->is_active = false;
     $front_desk_user->save();
 
-    return redirect()->route('frontdeskusers.list')->withFlash(['success' => 'User account has been suspend and they can no longer login.']);
+    return redirect()->route('frontdeskusers.index')->withFlash(['success' => 'User account has been suspend and they can no longer login.']);
   }
 
   public function unsuspendFrontDeskUser(Request $request, FrontDeskUser $front_desk_user)
@@ -85,7 +85,7 @@ class FrontDeskUserController extends Controller
     $front_desk_user->is_active = true;
     $front_desk_user->save();
 
-    return redirect()->route('frontdeskusers.list')->withFlash(['success' => 'User account has been restored and they can login once again.']);
+    return redirect()->route('frontdeskusers.index')->withFlash(['success' => 'User account has been restored and they can login once again.']);
   }
 
   public function activateFrontDeskUserAccount(Request $request, FrontDeskUser $front_desk_user)
@@ -97,7 +97,7 @@ class FrontDeskUserController extends Controller
 
     $front_desk_user->notify(new AccountActivated);
 
-    return redirect()->route('frontdeskusers.list')->withFlash(['success' => 'User account has been activated and they have received a notification mail.']);
+    return redirect()->route('frontdeskusers.index')->withFlash(['success' => 'User account has been activated and they have received a notification mail.']);
   }
 
   public function deleteFrontDeskUserAccount(Request $request, FrontDeskUser $front_desk_user)
@@ -105,6 +105,6 @@ class FrontDeskUserController extends Controller
     $this->authorize('delete', $front_desk_user);
 
     $front_desk_user->forceDelete();
-    return redirect()->route('frontdeskusers.list')->withFlash(['success' => 'User account and all their records deleted.']);
+    return redirect()->route('frontdeskusers.index')->withFlash(['success' => 'User account and all their records deleted.']);
   }
 }

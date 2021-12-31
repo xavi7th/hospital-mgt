@@ -51,7 +51,7 @@ class SuperAdminTest extends TestCase
 
   public function test_super_admin_can_view_front_desk_users()
   {
-    $rsp = $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->get(route('frontdeskusers.list'))->assertOk();
+    $rsp = $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->get(route('frontdeskusers.index'))->assertOk();
 
     $rsp->assertInertia(fn(Assert $page) => $page
       ->component('SuperAdmin::ManageUsers', false)
@@ -122,7 +122,7 @@ class SuperAdminTest extends TestCase
     $this->assertFalse($this->front_desk_user->isAccountActivated());
 
     $this->actingAs($this->super_admin, $this->getAuthGuard($this->super_admin))->put(route('frontdeskusers.activate', $this->front_desk_user))
-      ->assertRedirect(route('frontdeskusers.list'))
+      ->assertRedirect(route('frontdeskusers.index'))
       ->assertSessionHasNoErrors()
       ->assertSessionMissing('flash.error')
       ->assertSessionHas('flash.success', 'User account has been activated and they have received a notification mail.');

@@ -15,7 +15,7 @@ Route::prefix(FrontDeskUser::DASHBOARD_ROUTE_PREFIX)->name(FrontDeskUser::ROUTE_
   });
 
   Route::middleware('auth:' . collect(config('auth.guards'))->except(['web','api'])->keys()->implode(','))->group(function () {
-    Route::get('', [FrontDeskUserController::class, 'getAllFrontDeskUsers'])->name('list')->defaults('menu', __e('Manage Front Desk Users', 'viewAny,' . FrontDeskUser::class, 'users', 2, false, 'Manage Users', 1));
+    Route::get('', [FrontDeskUserController::class, 'getAllFrontDeskUsers'])->name('index')->defaults('menu', __e('Manage Front Desk Users', 'viewAny,' . FrontDeskUser::class, 'users', 2, false, 'Manage Users', 1));
     Route::post('create', [FrontDeskUserController::class, 'createFrontDeskUser'])->name('create');
     Route::put('{front_desk_user}/update', [FrontDeskUserController::class, 'updateFrontDeskUser'])->name('update');
     Route::put('{front_desk_user}/suspend', [FrontDeskUserController::class, 'suspendFrontDeskUser'])->name('suspend');

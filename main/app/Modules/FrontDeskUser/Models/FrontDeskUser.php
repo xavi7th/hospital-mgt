@@ -13,7 +13,7 @@ class FrontDeskUser extends User
 {
   use HasFactory, DeletesRelationships;
 
-  const DASHBOARD_ROUTE_PREFIX = 'frontdesk-users';
+  const DASHBOARD_ROUTE_PREFIX = 'front-desk-users';
   const ROUTE_NAME_PREFIX = 'frontdeskusers.';
 
   protected $table = 'front_desk_users';
