@@ -13,9 +13,10 @@ class CaseNote extends Model
 {
   use HasFactory, BelongsToThrough;
 
-  protected $fillable = ['appointment_id', 'patient_symptoms', 'diagnosis', 'prescriptions',];
+  protected $fillable = ['appointment_id', 'patient_symptoms', 'diagnosis', 'prescriptions', 'doctor_id'];
   protected $casts = [
-    'appointment_id' => 'int'
+    'appointment_id' => 'int',
+    'doctor_id' => 'int',
   ];
 
   protected static function newFactory()

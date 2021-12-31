@@ -16,6 +16,7 @@ class CreateCaseNotesTable extends Migration
         Schema::create('case_notes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('appointment_id');
+            $table->foreignId('doctor_id');
             $table->text('patient_symptoms');
             $table->text('diagnosis');
             $table->text('prescriptions');

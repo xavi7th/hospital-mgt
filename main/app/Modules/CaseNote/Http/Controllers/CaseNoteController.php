@@ -2,78 +2,36 @@
 
 namespace App\Modules\CaseNote\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\Controller;
+use App\Modules\Patient\Models\Patient;
+use App\Modules\Appointment\Models\Appointment;
+use App\Modules\CaseNote\Http\Requests\CreateCaseNoteRequest;
 
 class CaseNoteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
-    public function index()
-    {
-        return view('casenote::index');
-    }
+  public function index(Request $request, Appointment $appointment)
+  {
+    return inertia('CaseNote::ViewCaseNotes', [
+      'appointment' => $appointment->load(['patient']),
+      'case_notes' => $appointment->case_notes
+    ])->withViewData([
+      'title' => 'Appointments List',
+      'meta' =>''
+    ]);
+  }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create()
-    {
-        return view('casenote::create');
-    }
+  public function store(CreateCaseNoteRequest $request, Appointment $appointment)
+  {
+    $this->authorize('chartPatientSymptoms', Patient::class);
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    $request->createCaseNote();
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function show($id)
-    {
-        return view('casenote::show');
-    }
+    return redirect()->route('appointments.case_notes', $appointment)->withFlash(['success' => 'Case Note updated!']);
+  }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
-    {
-        return view('casenote::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
-    {
-        //
-    }
+  public function show($id)
+  {
+    return view('casenote::show');
+  }
 }

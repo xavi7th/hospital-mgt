@@ -4,6 +4,7 @@ namespace App\Modules\CaseNote\Database\factories;
 
 use App\Modules\Appointment\Models\Appointment;
 use App\Modules\CaseNote\Models\CaseNote;
+use App\Modules\Doctor\Models\Doctor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CaseNoteFactory extends Factory
@@ -24,6 +25,7 @@ class CaseNoteFactory extends Factory
   {
     return [
       'appointment_id' => null,
+      'doctor_id' => null,
       'patient_symptoms' => $this->faker->sentences(3, true),
       'diagnosis' => $this->faker->sentences(3, true),
       'prescriptions' => $this->faker->sentences(3, true),
@@ -35,6 +37,15 @@ class CaseNoteFactory extends Factory
     return $this->state(function (array $attributes) {
       return [
         'appointment_id' => Appointment::factory()->create()->id,
+      ];
+    });
+  }
+
+  public function with_doctor()
+  {
+    return $this->state(function (array $attributes) {
+      return [
+        'doctor_id' => Doctor::factory()->create()->id,
       ];
     });
   }

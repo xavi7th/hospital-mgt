@@ -1,16 +1,10 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use Illuminate\Support\Facades\Route;
+use App\Modules\CaseNote\Http\Controllers\CaseNoteController;
 
-Route::prefix('casenote')->group(function() {
-    Route::get('/', 'CaseNoteController@index');
+Route::prefix('case-notes')->name('casenotes.')->group(function() {
+  Route::get('{appointment}', [CaseNoteController::class, 'index'])->name('index')->middleware('auth:doctor,nurse');
+  Route::post('{appointment}/create', [CaseNoteController::class, 'store'])->name('create')->middleware('auth:doctor');
+  Route::put('{case_note}', [CaseNoteController::class, 'show'])->name('show')->middleware('auth:doctor,nurse');
 });

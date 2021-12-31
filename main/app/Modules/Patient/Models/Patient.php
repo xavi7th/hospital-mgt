@@ -3,6 +3,7 @@
 namespace App\Modules\Patient\Models;
 
 use App\Modules\Appointment\Models\Appointment;
+use App\Modules\CaseNote\Models\CaseNote;
 use App\Modules\Nurse\Models\Vitals;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,6 +34,11 @@ class Patient extends Model
   public function vital_signs()
   {
     return $this->hasManyThrough(Vitals::class, Appointment::class);
+  }
+
+  public function case_notes()
+  {
+    return $this->hasManyThrough(CaseNote::class, Appointment::class);
   }
 
   protected static function newFactory()
