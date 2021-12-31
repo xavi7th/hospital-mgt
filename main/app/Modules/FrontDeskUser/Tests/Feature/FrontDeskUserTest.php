@@ -16,6 +16,30 @@ class FrontDeskUserTest extends TestCase
 {
   use RefreshDatabase;
 
+
+  public function test_front_desk_user_visit_login_page()
+  {
+    $rsp = $this->get(route('auth.login'))->assertOk();
+
+    $rsp->assertInertia(fn (Assert $page) => $page
+      ->component('UserAuth::Login')
+      ->url('/login')
+      ->has('can_reset_password')
+      ->has('status')
+    );
+  }
+
+  public function test_front_desk_user_can_login()
+  {
+
+    $this->post(route('auth.login'), ['email' => $this->front_desk_user->email, 'password' => 'pass'])
+    ->assertSessionMissing('flash.error')
+    ->assertSessionHasNoErrors()
+    ->assertRedirect(route($this->front_desk_user->dashboardRoute()));
+
+    $this->assertAuthenticated($this->getAuthGuard($this->front_desk_user));
+  }
+
   public function test_front_desk_users_can_visit_their_dashboard()
   {
 

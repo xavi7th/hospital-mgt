@@ -101,9 +101,10 @@ class LoginRequest extends FormRequest
     });
 
     if ($this->authCheck && ! Auth::guard($this->authGuard)->user()->isSuperAdmin() && ! Auth::guard($this->authGuard)->user()->is_active) {
-      $this->authGuard = false;
 
       Auth::guard($this->authGuard)->user()->logout();
+
+      $this->authGuard = false;
 
       throw ValidationException::withMessages([
         'email' => 'Account Suspended! Contact your account administrator.',

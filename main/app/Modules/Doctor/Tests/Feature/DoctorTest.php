@@ -10,10 +10,34 @@ use App\Modules\Doctor\Models\Doctor;
 use App\Modules\Patient\Models\Patient;
 use App\Modules\Appointment\Models\Appointment;
 use App\Modules\CaseNote\Models\CaseNote;
-use App\Modules\Nurse\Database\factories\VitalsFactory;
 
 class DoctorTest extends TestCase
 {
+
+  public function test_doctor_visit_login_page()
+  {
+    $rsp = $this->get(route('auth.login'))->assertOk();
+
+    $rsp->assertInertia(fn (Assert $page) => $page
+      ->component('UserAuth::Login')
+      ->url('/login')
+      ->has('can_reset_password')
+      ->has('status')
+    );
+  }
+
+  public function test_doctor_can_login()
+  {
+    $doctor = Doctor::factory()->create();
+
+    $this->post(route('auth.login'), ['email' => $doctor->email, 'password' => 'pass'])
+    ->assertSessionMissing('flash.error')
+    ->assertSessionHasNoErrors()
+    ->assertRedirect(route($doctor->dashboardRoute()));
+
+    $this->assertAuthenticated($this->getAuthGuard($doctor));
+  }
+
   public function test_doctors_can_visit_their_dashboard()
   {
     $patients = Patient::factory()->count(100)->create();
