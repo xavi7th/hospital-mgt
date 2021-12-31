@@ -8,6 +8,7 @@ use App\Modules\Nurse\Models\Nurse;
 use App\Modules\Nurse\Models\Vitals;
 use App\Modules\Doctor\Models\Doctor;
 use App\Modules\Patient\Models\Patient;
+use App\Modules\CaseNote\Models\CaseNote;
 use App\Modules\Appointment\Models\Appointment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -146,35 +147,62 @@ class NurseTest extends TestCase
 
   public function test_nurses_can_view_a_patients_case_notes()
   {
+    $patients = Patient::factory()->count(100)->create();
+    $doctors = Doctor::factory()->count(2)->create();
     $patient = Patient::factory()->create();
-    $doctor = Doctor::factory()->create();
-    Appointment::factory()->discharged()->count(10)->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'nurse_id' => $nurse->id]);
-    Appointment::factory()->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'nurse_id' => $nurse->id]);
+    $nurse = Nurse::factory()->activated()->active()->create();
+    $doctor = Doctor::factory()->activated()->active()->create();
 
-    $rsp = $this->actingAs($nurse, $this->getAuthGuard($nurse))->get(route('appointments.case_notes', $appointment))->assertOk();
+    for ($i = 0; $i < 100; $i++) {
+      $appt = Appointment::factory()->create([
+        'doctor_id' => $did = $this->faker->randomElement($doctors->pluck('id')),
+        'patient_id' => $this->faker->randomElement($patients->pluck('id')),
+        'front_desk_user_id' => $this->front_desk_user->id,
+        'appointment_date' => now()->subHours(5),
+        'nurse_id' => $nurse->id,
+        'posted_at' => now()
+      ]);
+      Vitals::factory()->create([
+        'nurse_id' => $nurse->id,
+        'appointment_id' => $appt->id,
+        'vitals' => ['temp' => $this->faker->randomNumber(), 'height' => $this->faker->randomNumber(), 'weight' => $this->faker->randomNumber()],
+      ]);
+      CaseNote::factory()->count(10)->create(['appointment_id' => $appt->id, 'doctor_id' => $did]);
+    }
+
+    $appointment = Appointment::factory()->create([
+      'doctor_id' => $doctor->id,
+      'patient_id' => $patient->id,
+      'front_desk_user_id' => $this->front_desk_user->id,
+      'nurse_id' => $nurse->id,
+      'appointment_date' => now()->subHours(5),
+      'posted_at' => now()
+    ]);
+
+    Vitals::factory()->count(15)->create([
+      'nurse_id' => $nurse->id,
+      'appointment_id' => $appointment->id,
+    ]);
+
+    CaseNote::factory()->count(10)->create(['appointment_id' => $appointment->id, 'doctor_id' => $doctor->id]);
+
+    $rsp = $this->actingAs($doctor, $this->getAuthGuard($doctor))->get(route('casenotes.index', $appointment))->assertOk();
 
     $rsp->assertInertia(
       fn (Assert $page) => $page
-        ->component('Nurse::CaseNotes')
-        ->url('/patients/' . $patient->id)
-        ->has(
-          'patient',
-          fn ($page) => $page
-            ->has(
-              'appointments',
-              11,
-              fn ($page) => $page
-                ->where('case_note', [])
-                ->etc()
-            )
-            ->etc()
-        )
-        ->has(
-          'pending_appointment',
-          fn ($page) => $page
+        ->component('CaseNote::ViewCaseNotes')
+        ->url('/case-notes/' . $appointment->id)
+        ->log()
+        ->has('appointment', fn($page) => $page
+          ->has('case_notes', 10, fn($page) => $page
             ->where('doctor.name', $doctor->name)
-            ->where('booked_by.name', $nurse->name)
             ->etc()
+          )
+          ->has('vital_signs', 15, fn($page) => $page
+            ->where('nurse.name', $nurse->name)
+            ->etc()
+          )
+          ->etc()
         )
     );
   }

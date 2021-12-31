@@ -7,14 +7,16 @@ use App\Http\Controllers\Controller;
 use App\Modules\Patient\Models\Patient;
 use App\Modules\Appointment\Models\Appointment;
 use App\Modules\CaseNote\Http\Requests\CreateCaseNoteRequest;
+use App\Modules\CaseNote\Models\CaseNote;
 
 class CaseNoteController extends Controller
 {
   public function index(Request $request, Appointment $appointment)
   {
+    $this->authorize('viewAny', CaseNote::class);
+
     return inertia('CaseNote::ViewCaseNotes', [
-      'appointment' => $appointment->load(['patient']),
-      'case_notes' => $appointment->case_notes
+      'appointment' => $appointment->load(['patient', 'vital_signs.nurse', 'case_notes.doctor']),
     ])->withViewData([
       'title' => 'Appointments List',
       'meta' =>''

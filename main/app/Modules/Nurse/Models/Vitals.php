@@ -13,6 +13,11 @@ class Vitals extends Model
   protected $fillable = ['nurse_id', 'appointment_id', 'vitals',];
   protected $casts = ['vitals' => 'object', 'nurse_id' => 'int', 'appointment_id' => 'int'];
 
+  public function nurse()
+  {
+    return $this->belongsTo(Nurse::class);
+  }
+
   protected static function newFactory()
   {
     return VitalsFactory::new();

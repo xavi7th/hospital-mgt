@@ -228,10 +228,9 @@ class DoctorTest extends TestCase
       'posted_at' => now()
     ]);
 
-    Vitals::factory()->create([
+    Vitals::factory()->count(15)->create([
       'nurse_id' => $nurse->id,
       'appointment_id' => $appointment->id,
-      'vitals' => ['temp' => $this->faker->randomNumber(), 'height' => $this->faker->randomNumber(), 'weight' => $this->faker->randomNumber()],
     ]);
 
     CaseNote::factory()->count(10)->create(['appointment_id' => $appointment->id, 'doctor_id' => $doctor->id]);
@@ -242,8 +241,18 @@ class DoctorTest extends TestCase
       fn (Assert $page) => $page
         ->component('CaseNote::ViewCaseNotes')
         ->url('/case-notes/' . $appointment->id)
-        ->has('appointment')
-        ->has('case_notes', 10)
+        ->log()
+        ->has('appointment', fn($page) => $page
+          ->has('case_notes', 10, fn($page) => $page
+            ->where('doctor.name', $doctor->name)
+            ->etc()
+          )
+          ->has('vital_signs', 15, fn($page) => $page
+            ->where('nurse.name', $nurse->name)
+            ->etc()
+          )
+          ->etc()
+        )
     );
   }
 
