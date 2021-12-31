@@ -1,0 +1,13 @@
+{
+    "name": "Doctor",
+    "alias": "doctor",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\Doctor\\Providers\\DoctorServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

@@ -3,7 +3,8 @@ import { page, InertiaLink } from '@inertiajs/inertia-svelte';
 
 $: ({ app } = $page.props);
 
-export let routes = {};
+// export let routes = {};
+$: currentRoute = route().current();
 </script>
 
 <!-- BEGIN: Side Menu -->
@@ -13,7 +14,32 @@ export let routes = {};
   </a>
   <div class="side-nav__devider my-6"></div>
   <ul>
-    {#if route().current('frontdeskusers.activation.pending')}
+    <li>
+      <InertiaLink href="{route('superadmins.dashboard')}" class="side-menu {currentRoute === 'superadmins.dashboard' ? 'side-menu--active' : ''}">
+        <div class="side-menu__icon"> <i data-feather="home"></i> </div>
+        <div class="side-menu__title"> Dashboard</div>
+      </InertiaLink>
+    </li>
+    <li>
+      <InertiaLink href="{route('frontdeskusers.index')}" class="side-menu {currentRoute === 'frontdeskusers.index' ? 'side-menu--active' : ''}">
+        <div class="side-menu__icon"> <i data-feather="user"></i> </div>
+        <div class="side-menu__title"> Front Desk Users</div>
+      </InertiaLink>
+    </li>
+    <li>
+      <InertiaLink href="{route('doctors.index')}" class="side-menu {currentRoute === 'doctors.index' ? 'side-menu--active' : ''}">
+        <div class="side-menu__icon"> <i data-feather="users"></i> </div>
+        <div class="side-menu__title"> Doctors</div>
+      </InertiaLink>
+    </li>
+    <li>
+      <InertiaLink href="{route('nurses.index')}" class="side-menu {currentRoute === 'nurses.index' ? 'side-menu--active' : ''}">
+        <div class="side-menu__icon"> <i data-feather="users"></i> </div>
+        <div class="side-menu__title"> Nurses</div>
+      </InertiaLink>
+    </li>
+
+    <!-- {#if route().current('frontdeskusers.activation.pending')}
       <li>
         <InertiaLink href="{route('frontdeskusers.activation.pending')}" class="side-menu side-menu--active">
           <div class="side-menu__icon"> <i data-feather="home"></i> </div>
@@ -39,7 +65,7 @@ export let routes = {};
           </li>
         {/if}
       {/each}
-    {/if}
+    {/if} -->
   </ul>
 </nav>
 <!-- END: Side Menu -->

@@ -1,7 +1,9 @@
 <?php
 
+use App\Modules\Doctor\Models\Doctor;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
 use App\Modules\FrontDeskUser\Models\FrontDeskUser;
+use App\Modules\Nurse\Models\Nurse;
 
 return [
 
@@ -53,6 +55,14 @@ return [
       'driver' => 'session',
       'provider' => 'front_desk_users',
     ],
+    'doctor' => [
+      'driver' => 'session',
+      'provider' => 'doctors',
+    ],
+    'nurse' => [
+      'driver' => 'session',
+      'provider' => 'nurses',
+    ],
   ],
 
   /*
@@ -84,6 +94,14 @@ return [
     'front_desk_users' => [
       'driver' => 'eloquent',
       'model' => FrontDeskUser::class,
+    ],
+    'doctors' => [
+      'driver' => 'eloquent',
+      'model' => Doctor::class,
+    ],
+    'nurses' => [
+      'driver' => 'eloquent',
+      'model' => Nurse::class,
     ],
   ],
 

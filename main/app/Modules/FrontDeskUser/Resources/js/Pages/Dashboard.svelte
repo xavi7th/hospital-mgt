@@ -4,7 +4,6 @@
 </script>
 
 <script>
-  import ForexChart from '@miscellaneous-components/ForexChart.svelte';
   import Modal from '@miscellaneous-components/Modal.svelte';
   import { to_currency } from '@miscellaneous-shared/utils';
   import { page } from '@inertiajs/inertia-svelte';
@@ -12,7 +11,7 @@
 
   $: ({ authuser } = $page.props);
 
-  export let current_plan = {}, forex_charts = [], has_user_bonus = false, can_suspend_investments = false, can_upload_pop = false;
+  export let current_plan = {}, has_user_bonus = false, can_suspend_investments = false, can_upload_pop = false;
 
   let files, transaction, details={};
 
@@ -35,9 +34,6 @@
 
 <div class="grid grid-cols-12 gap-6">
   <div class="col-span-12 xxl:col-span-9 grid grid-cols-12 gap-6">
-      <div class="col-span-12 mt-8">
-        <ForexChart chart_data={forex_charts.ticker_bar_dark} />
-      </div>
 
       <div class="col-span-12 mt-8">
           <div class="intro-y flex items-center h-10">
@@ -122,12 +118,12 @@
                   Advanced Real-Time Chart
               </h2>
           </div>
-          <ForexChart chart_data={forex_charts.advanced_real_time_charts} />
+
       </div>
       <!-- END: General Report -->
       <div class="col-span-12 lg:col-span-12 mt-2">
           <div style="width: 100%;">
-            <ForexChart chart_data={forex_charts.nasdac_aapl} />
+
           </div>
       </div>
   </div>
@@ -141,7 +137,7 @@
                   </h2>
               </div>
               <div class="mt-5">
-                <ForexChart chart_data={forex_charts.eurusd_rates} />
+
               </div>
           </div>
           <!-- END: Transactions -->
@@ -153,7 +149,7 @@
                   </h2>
               </div>
               <div class="mt-5">
-                <ForexChart chart_data={forex_charts.market_activity} />
+
               </div>
           </div>
           <!-- END: Transactions -->

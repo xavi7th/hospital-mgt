@@ -5,7 +5,6 @@ namespace App\Modules\UserAuth\Http\Requests;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
-use App\Modules\frontdeskuser\Models\frontdeskuser;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
@@ -93,7 +92,7 @@ class LoginRequest extends FormRequest
   */
   protected function attemptLogin(): bool
   {
-    collect(config('auth.guards'))->except('api')->each(function ($details, $guard) {
+    collect(config('auth.guards'))->except(['api', 'web'])->each(function ($details, $guard) {
       if (Auth::guard($guard)->attempt($this->only($this->username(), 'password'), $this->boolean('remember'))) {
         $this->authCheck = true;
         $this->authGuard = $guard;
