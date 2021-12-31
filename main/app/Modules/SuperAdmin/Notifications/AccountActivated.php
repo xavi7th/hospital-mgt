@@ -29,7 +29,7 @@ class AccountActivated extends Notification implements ShouldQueue
       ->subject(config('app.name') . ' Account Activated!')
       ->greeting('Hello ' . $user->first_name . '!')
       ->line('Your ' . config('app.name') . ' account has been created and activated.')
-      ->line('You can login to your account using the libnk below.')
+      ->line('You can login to your account using the link below.')
       ->action('Login', route('auth.login'))
       ->line('Contact your admin for login details.')
       ->salutation(new HtmlString('Regards, <br> The accounts team.'));
