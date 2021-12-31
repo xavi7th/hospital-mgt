@@ -43,7 +43,7 @@ class PatientController extends Controller
   public function show(Patient $patient)
   {
     return inertia('FrontDeskUser::PatientDetails', [
-      'patient' => $patient->load('appointments.case_note'),
+      'patient' => $patient->load('appointments.case_notes'),
       'pending_appointment' => $patient->pending_appointment->load(['doctor', 'booked_by'])
     ])->withViewData([
       'title' => 'List of Patients',

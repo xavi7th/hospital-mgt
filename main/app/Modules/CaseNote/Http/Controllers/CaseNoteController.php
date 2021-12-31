@@ -29,7 +29,7 @@ class CaseNoteController extends Controller
 
     $request->createCaseNote();
 
-    return redirect()->route('appointments.case_notes', $appointment)->withFlash(['success' => 'Case Note updated!']);
+    return redirect()->route('casenotes.index', $appointment)->withFlash(['success' => 'Case Note updated!']);
   }
 
   public function show($id)

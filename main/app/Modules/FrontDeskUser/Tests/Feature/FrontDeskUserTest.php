@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Tests\TestCase;
 use Inertia\Testing\Assert;
 use Illuminate\Http\UploadedFile;
+use App\Modules\Nurse\Models\Nurse;
 use App\Modules\Doctor\Models\Doctor;
 use App\Modules\Patient\Models\Patient;
 use App\Modules\Appointment\Models\Appointment;
@@ -86,7 +87,7 @@ class FrontDeskUserTest extends TestCase
       ->url('/patients/'. $patient->id)
       ->has('patient', fn($page) => $page
         ->has('appointments', 11, fn($page) => $page
-          ->where('case_note', [])
+          ->where('case_notes', [])
           ->etc()
         )
         ->etc()
@@ -103,7 +104,6 @@ class FrontDeskUserTest extends TestCase
   {
     $patient = Patient::factory()->create();
     $doctor = Doctor::factory()->create();
-    Appointment::factory()->discharged()->count(10)->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'front_desk_user_id' => $this->front_desk_user->id]);
     $appointment = Appointment::factory()->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'front_desk_user_id' => $this->front_desk_user->id]);
 
     $this->actingAs($this->front_desk_user, $this->getAuthGuard($this->front_desk_user))->delete(route('appointments.delete', $appointment))
@@ -119,7 +119,8 @@ class FrontDeskUserTest extends TestCase
   {
     $patient = Patient::factory()->create();
     $doctor = Doctor::factory()->create();
-    $appointment = Appointment::factory()->discharged()->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'front_desk_user_id' => $this->front_desk_user->id]);
+    $nurse = Nurse::factory()->create();
+    $appointment = Appointment::factory()->posted($nurse->id)->create(['doctor_id' => $doctor->id, 'patient_id' => $patient->id, 'front_desk_user_id' => $this->front_desk_user->id]);
 
     $this->actingAs($this->front_desk_user, $this->getAuthGuard($this->front_desk_user))->delete(route('appointments.delete', $appointment))
         ->assertStatus(403);

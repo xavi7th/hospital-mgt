@@ -109,7 +109,7 @@ class NurseTest extends TestCase
       ]);
     }
 
-    for ($i = 0; $i < 7; $i++) {
+    for ($i = 0; $i < 17; $i++) {
       Appointment::factory()->create([
         'doctor_id' => $this->faker->randomElement($doctors->pluck('id')),
         'patient_id' => $this->faker->randomElement([1, 2]),
@@ -121,26 +121,32 @@ class NurseTest extends TestCase
       ]);
     }
 
+    for ($i = 0; $i < 7; $i++) {
+      Appointment::factory()->create([
+        'doctor_id' => $this->faker->randomElement($doctors->pluck('id')),
+        'patient_id' => $this->faker->randomElement([1, 2]),
+        'front_desk_user_id' => $this->front_desk_user->id,
+        'appointment_date' => now()->subHours(5),
+        'posted_at' => now(),
+        'nurse_id' => $nurse->id,
+      ]);
+    }
+
     $rsp = $this->actingAs($nurse, $this->getAuthGuard($nurse))->get(route('patients.index'))->assertOk();
 
     $rsp->assertInertia(
       fn (Assert $page) => $page
         ->component('Patient::PatientList')
         ->url('/patients')
-        ->has(
-          'patients',
-          2,
-          fn ($page) => $page
-            ->has(
-              'appointments',
-              fn ($page) => $page
-                ->has('0.doctor')
-                ->has('0.nurse')
-                ->has('0.case_notes')
-                ->etc()
-            )
-            ->where('is_active', true)
+        ->has('patients', 2, fn ($page) => $page
+          ->has('appointments', fn ($page) => $page
+            ->has('0.doctor')
+            ->has('0.nurse')
+            ->has('0.case_notes')
             ->etc()
+          )
+          ->where('is_active', true)
+          ->etc()
         )
     );
   }
@@ -192,7 +198,6 @@ class NurseTest extends TestCase
       fn (Assert $page) => $page
         ->component('CaseNote::ViewCaseNotes')
         ->url('/case-notes/' . $appointment->id)
-        ->log()
         ->has('appointment', fn($page) => $page
           ->has('case_notes', 10, fn($page) => $page
             ->where('doctor.name', $doctor->name)

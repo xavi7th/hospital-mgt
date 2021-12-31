@@ -179,7 +179,6 @@ class DoctorTest extends TestCase
     $rsp->assertInertia(
       fn (Assert $page) => $page
         ->component('Patient::PatientList')
-        ->log()
         ->url('/patients')
         ->has('patients', 5, fn ($page) => $page
           ->has('appointments', fn ($page) => $page
@@ -241,7 +240,6 @@ class DoctorTest extends TestCase
       fn (Assert $page) => $page
         ->component('CaseNote::ViewCaseNotes')
         ->url('/case-notes/' . $appointment->id)
-        ->log()
         ->has('appointment', fn($page) => $page
           ->has('case_notes', 10, fn($page) => $page
             ->where('doctor.name', $doctor->name)
