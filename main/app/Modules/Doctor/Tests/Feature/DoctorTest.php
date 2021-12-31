@@ -28,7 +28,7 @@ class DoctorTest extends TestCase
 
   public function test_doctor_can_login()
   {
-    $doctor = Doctor::factory()->create();
+    $doctor = Doctor::factory()->active()->create();
 
     $this->post(route('auth.login'), ['email' => $doctor->email, 'password' => 'pass'])
     ->assertSessionMissing('flash.error')
@@ -36,6 +36,26 @@ class DoctorTest extends TestCase
     ->assertRedirect(route($doctor->dashboardRoute()));
 
     $this->assertAuthenticated($this->getAuthGuard($doctor));
+  }
+
+  public function test_suspended_doctor_cannot_login()
+  {
+    $doctor = Doctor::factory()->create();
+
+    $this->post(route('auth.login'), ['email' => $doctor->email, 'password' => 'pass'])
+    ->assertSessionMissing('flash.error')
+    ->assertSessionHasErrors(['email' => 'Account Suspended! Contact your account administrator.'])
+    ->assertRedirect();
+
+    $this->assertGuest($this->getAuthGuard($doctor));
+  }
+
+  public function test_unactivated_doctor_cannot_login()
+  {
+    $doctor = Doctor::factory()->active()->create();
+
+    $rsp = $this->actingAs($doctor, $this->getAuthGuard($doctor))->get(route($doctor->dashboardRoute()))->assertRedirect(route('activation.pending'));
+
   }
 
   public function test_doctors_can_visit_their_dashboard()

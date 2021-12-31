@@ -6,7 +6,7 @@ use App\Modules\FrontDeskUser\Models\FrontDeskUser;
 
 Route::prefix(FrontDeskUser::DASHBOARD_ROUTE_PREFIX)->name(FrontDeskUser::ROUTE_NAME_PREFIX)->group(function () {
 
-  Route::middleware(['auth', 'activated', 'active'])->group(function () {
+  Route::middleware(['auth:front_desk_user', 'activated', 'active'])->group(function () {
     Route::get('dashboard', [FrontDeskUserController::class,'index'])->name('dashboard')->defaults('menu', __e('Dashboard', 'accessDashboard,' . FrontDeskUser::class, 'home', 1, false, null, 1));
     if (config('app.can_update_profile')) {
       Route::get('profile', [FrontDeskUserController::class,'profile'])->name('profile')->defaults('menu', __e('Profile', 'updateProfile,' . FrontDeskUser::class, 'user', 8, false));

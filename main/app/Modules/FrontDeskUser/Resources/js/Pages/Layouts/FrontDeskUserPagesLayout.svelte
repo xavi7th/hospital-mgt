@@ -1,6 +1,9 @@
 <script>
   import MobileMenu from "@frontdeskuser-pages/Partials/MobileMenu.svelte";
   import ClientMenu from "@frontdeskuser-pages/Partials/ClientMenu.svelte";
+  import SuperAdminMenu from "@superadmin-pages/Partials/SuperAdminMenu.svelte";
+  import DoctorMenu from "@doctor-pages/Partials/DoctorMenu.svelte";
+  import NurseMenu from "@nurse-pages/Partials/NurseMenu.svelte";
   import TopBar from "@frontdeskuser-pages/Partials/TopBar.svelte";
   import { page } from "@inertiajs/inertia-svelte";
   import { onMount } from "svelte";
@@ -20,7 +23,15 @@
 
 
 <main class="flex">
-  <ClientMenu {routes}/>
+  {#if authuser.isFrontDeskUser}
+    <ClientMenu {routes}/>
+  {:else if authuser.isSuperAdmin}
+    <SuperAdminMenu {routes}/>
+  {:else if authuser.isDoctor}
+    <DoctorMenu {routes}/>
+  {:else if authuser.isNurse}
+    <NurseMenu {routes}/>
+  {/if}
   <div class="content">
     <TopBar {authuser} {can_update_profile}/>
 

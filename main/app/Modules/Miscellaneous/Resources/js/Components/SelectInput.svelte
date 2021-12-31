@@ -5,6 +5,7 @@
     export let onChange;
     export let errors = [];
     export let inputIcon = [];
+    export let flat = true;
 
     let val;
 
@@ -29,6 +30,15 @@
   <option value="US">United States</option>
 </SelectInput> -->
 
+
+{#if flat}
+  {#if label}
+        <label class="form-label" for={name}>{label}:</label>
+    {/if}
+    <select id={name} name={name} {...props} class={className} class:error={errors && errors.length} on:change={onChange} bind:value={val}>
+      <slot/>
+    </select>
+{:else}
 <div class={className}>
     {#if label}
         <label class="form-label" for={name}>{label}:</label>
@@ -44,3 +54,4 @@
         <div class="form-error">{errors}</div>
     {/if}
 </div>
+{/if}

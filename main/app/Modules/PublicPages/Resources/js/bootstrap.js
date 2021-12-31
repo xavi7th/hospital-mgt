@@ -115,8 +115,6 @@ Inertia.on('error', (e) => {
     icon: "error",
     timer:10000, //milliseconds
     allowEscapeKey: true,
-    footer:
-    	`Our support email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:support@skymarkets24.com">support@skymarkets24.com</a>`,
   } );
 })
 
@@ -162,8 +160,6 @@ createInertiaApp({
         html: getErrorString( props.initialPage.props.errors ),
         icon: "error",
         timer:10000, //milliseconds
-        footer:
-          `Our support email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:${process.env.MIX_APP_EMAIL}">${process.env.MIX_APP_EMAIL}</a>`,
       } );
     }
     else if (props.initialPage.props.flash.success) {

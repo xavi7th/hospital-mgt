@@ -140,9 +140,6 @@
                       <a href="javascript:;" data-toggle="modal" on:click="{() => userDetails = user}" data-target="#set-btc-modal" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-purple-300 text-purple-800 zoom-in"> <i class="w-3 h-3 mr-1 fill-current" data-feather="wind"></i> SET BTC </a>
                   {/if}
 
-                  <InertiaLink href="{route('usertransactions.list', user)}" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-theme-8 text-gray-700 zoom-in"> <i class="w-3 h-3 mr-1 fill-current" data-feather="activity"></i> Transactions </InertiaLink>
-                  <InertiaLink href="{route('withdrawalrequests.list', user)}" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-theme-10 text-white zoom-in"> <i class="w-3 h-3 mr-1 fill-current" data-feather="sunset"></i> Withdrawal Requests</InertiaLink>
-                  <InertiaLink href="{route('usertransactions.deposit_requests', user)}" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-pink-500 text-white zoom-in"> <i class="w-3 h-3 mr-1 fill-current" data-feather="database"></i> Deposit Requests</InertiaLink>
                 {/if}
 
                 {#if user.is_verified}

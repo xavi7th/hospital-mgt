@@ -14,7 +14,9 @@ return [
       'superadmin.*',
     ],
     'frontdeskuser' => [
-      'frontdeskusers.*'
+      'frontdeskusers.*',
+      'appointments.*',
+      'patients.*',
     ],
     'public' => [
       'app.*',
