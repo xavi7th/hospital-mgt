@@ -22,6 +22,14 @@ class CreateUserRequest extends FormRequest
     ];
   }
 
+  public function messages()
+  {
+    return [
+      'avatar.required' => 'Upload an image of the staff for identification purposes',
+      'avatar.image' => 'Image of the staff must be an image. PDFs and other documents not allowed',
+    ];
+  }
+
   /**
    * Determine if the user is authorized to make this request.
    *
