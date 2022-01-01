@@ -1,5 +1,5 @@
 <script>
-  // export let onChange;
+  export let onChange;
   export let label;
   export let inputIcon ="fa-user";
   export let placeHolder;
@@ -27,7 +27,7 @@
   {#if label}
         <label class="form-label" for={name}>{label}:</label>
     {/if}
-   <input id={name} name={name} {...props} bind:value="{val}" class={className} {placeHolder} class:error={errors && errors.length}/>
+   <input id={name} name={name} {...props} bind:value="{val}" class={className} {placeHolder} class:error={errors && errors.length} on:change={onChange}/>
 {:else}
   <div class={className}>
     {#if label}

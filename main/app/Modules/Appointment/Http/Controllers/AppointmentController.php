@@ -12,8 +12,10 @@ class AppointmentController extends Controller
 {
   public function index(string $date = null)
   {
+    // dd($date);
     return inertia('Appointment::AppointmentList', [
-      'appointments' => Appointment::with('doctor', 'patient','booked_by')->when($date, fn($q)=>$q->whereDate('appointment_date', Carbon::parse($date)->toDateString()))->paginate()
+      'pending_appointments' => Appointment::with('doctor:id,name', 'patient:id,name','booked_by:id,name')->when(!is_null($date), fn($q)=>$q->whereDate('appointment_date', Carbon::parse($date)->toDateString()))->pending()->paginate(),
+      'total_appointment_count' => Appointment::with('doctor:id,name', 'patient:id,name','booked_by:id,name')->when(!is_null($date), fn($q)=>$q->whereDate('appointment_date', Carbon::parse($date)->toDateString()))->pending()->count()
     ])->withViewData([
       'title' => 'Appointments List',
       'meta' =>''

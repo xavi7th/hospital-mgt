@@ -11,9 +11,8 @@
   import Modal from '@miscellaneous-components/Modal.svelte';
   import { page } from '@inertiajs/inertia-svelte';
   import { Inertia } from '@inertiajs/inertia';
-  import { onMount } from 'svelte';
 
-$: ({ authuser, errors } = $page.props);
+$: ({ errors } = $page.props);
 
 let details = {}, appointments=[], val, pending_appointment =  {}, actionUrl, actionMethod;
 

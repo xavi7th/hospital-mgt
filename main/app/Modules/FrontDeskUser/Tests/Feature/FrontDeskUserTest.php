@@ -224,10 +224,11 @@ class FrontDeskUserTest extends TestCase
     $rsp->assertInertia(fn (Assert $page) => $page
       ->component('Appointment::AppointmentList')
       ->url('/appointments/'. $date)
-      ->where('appointments.current_page', 1)
-      ->has('appointments.links')
-      ->where('appointments.per_page', 15)
-      ->has('appointments.data', 15, fn($page) => $page
+      ->has('total_appointment_count')
+      ->where('pending_appointments.current_page', 1)
+      ->has('pending_appointments.links')
+      ->where('pending_appointments.per_page', 15)
+      ->has('pending_appointments.data', 15, fn($page) => $page
         ->where('doctor.name', fn($val) => $doctors->contains(fn($v) => $v->name == $val))
         ->where('booked_by.name', $this->front_desk_user->name)
         ->where('appointment_date', fn($dt) => Carbon::parse($dt)->isSameDay(Carbon::parse($date)))
