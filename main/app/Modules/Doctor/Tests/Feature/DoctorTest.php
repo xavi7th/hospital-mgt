@@ -10,10 +10,54 @@ use App\Modules\Doctor\Models\Doctor;
 use App\Modules\Patient\Models\Patient;
 use App\Modules\Appointment\Models\Appointment;
 use App\Modules\CaseNote\Models\CaseNote;
-use App\Modules\Nurse\Database\factories\VitalsFactory;
 
 class DoctorTest extends TestCase
 {
+
+  public function test_doctor_visit_login_page()
+  {
+    $rsp = $this->get(route('auth.login'))->assertOk();
+
+    $rsp->assertInertia(fn (Assert $page) => $page
+      ->component('UserAuth::Login')
+      ->url('/login')
+      ->has('can_reset_password')
+      ->has('status')
+    );
+  }
+
+  public function test_doctor_can_login()
+  {
+    $doctor = Doctor::factory()->active()->create();
+
+    $this->post(route('auth.login'), ['email' => $doctor->email, 'password' => 'pass'])
+    ->assertSessionMissing('flash.error')
+    ->assertSessionHasNoErrors()
+    ->assertRedirect(route($doctor->dashboardRoute()));
+
+    $this->assertAuthenticated($this->getAuthGuard($doctor));
+  }
+
+  public function test_suspended_doctor_cannot_login()
+  {
+    $doctor = Doctor::factory()->create();
+
+    $this->post(route('auth.login'), ['email' => $doctor->email, 'password' => 'pass'])
+    ->assertSessionMissing('flash.error')
+    ->assertSessionHasErrors(['email' => 'Account Suspended! Contact your account administrator.'])
+    ->assertRedirect();
+
+    $this->assertGuest($this->getAuthGuard($doctor));
+  }
+
+  public function test_unactivated_doctor_cannot_login()
+  {
+    $doctor = Doctor::factory()->active()->create();
+
+    $rsp = $this->actingAs($doctor, $this->getAuthGuard($doctor))->get(route($doctor->dashboardRoute()))->assertRedirect(route('activation.pending'));
+
+  }
+
   public function test_doctors_can_visit_their_dashboard()
   {
     $patients = Patient::factory()->count(100)->create();

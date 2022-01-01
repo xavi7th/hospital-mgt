@@ -88,7 +88,7 @@ mix
 				frame
 			} = warning;
 
-			if (code == "anchor-is-valid" || code == "a11y-invalid-attribute") {
+			if (code == "anchor-is-valid" || code == "a11y-invalid-attribute" || code == "a11y-label-has-associated-control") {
 				return
 			}
 			if (code == "css-unused-selector") {

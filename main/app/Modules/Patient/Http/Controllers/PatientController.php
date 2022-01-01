@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
+use App\Modules\Doctor\Models\Doctor;
 use App\Modules\Patient\Models\Patient;
 use App\Modules\Patient\Http\Requests\CreatePatientRequest;
 
@@ -43,8 +44,8 @@ class PatientController extends Controller
   public function show(Patient $patient)
   {
     return inertia('FrontDeskUser::PatientDetails', [
-      'patient' => $patient->load('appointments.case_notes'),
-      'pending_appointment' => $patient->pending_appointment->load(['doctor', 'booked_by'])
+      'doctors' => Doctor::all(),
+      'patient' => $patient->load('past_appointments.doctor', 'pending_appointment.doctor', 'pending_appointment.booked_by'),
     ])->withViewData([
       'title' => 'List of Patients',
       'meta' => ''

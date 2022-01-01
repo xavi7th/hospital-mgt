@@ -5,6 +5,7 @@ namespace App\Modules\FrontDeskUser\Http\Controllers;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Modules\Patient\Models\Patient;
 use App\Modules\Appointment\Models\Appointment;
 use App\Modules\FrontDeskUser\Models\FrontDeskUser;
 use App\Modules\SuperAdmin\Transformers\StaffTransformer;
@@ -19,7 +20,8 @@ class FrontDeskUserController extends Controller
     $this->authorize('accessDashboard', FrontDeskUser::class);
 
     return Inertia::render('FrontDeskUser::Dashboard', [
-      'due_appointments' => Appointment::notPosted()->due()->get()
+      'due_appointments' => Appointment::with(['patient:id,name', 'doctor:id,name'])->notPosted()->due()->get(),
+      'total_num_of_reg_patients' => Patient::count()
     ])->withViewData([
       'title' => 'Welcome',
       'metaDesc' => ''

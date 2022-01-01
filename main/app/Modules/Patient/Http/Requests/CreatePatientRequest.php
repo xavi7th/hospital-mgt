@@ -26,6 +26,14 @@ class CreatePatientRequest extends FormRequest
     ];
   }
 
+  public function messages()
+  {
+    return [
+      'avatar.required' => 'The patient\'s image is required',
+      'avatar.image' => 'The patient\'s image must be an image file',
+    ];
+  }
+
 
   public function validated(): array
   {

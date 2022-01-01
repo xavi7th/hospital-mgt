@@ -21,7 +21,7 @@
 
   let searchTerm = "";
 
-	$: filteredList = front_desk_users.filter(item => item.name.indexOf(searchTerm) !== -1 || item.email.indexOf(searchTerm) !== -1);
+	$: filteredList = front_desk_users.filter(item => item.name.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 || item.email.indexOf(searchTerm.toLowerCase()) !== -1);
 
   export let front_desk_users = {},
     must_verify_users = false,
@@ -38,7 +38,7 @@
   let createUser = () => {
     BlockToast.fire({text:'Creating fron desk user account. Please wait ...'})
 
-    Inertia.post(route('auth.login'), details);
+    Inertia.post(route('frontdeskusers.create'), details);
   }
 
 </script>
@@ -46,43 +46,9 @@
 <div class="grid grid-cols-12 gap-6">
   <div class="col-span-12 mt-8">
       <div class="intro-y flex items-center h-10">
-          <h2 class="text-lg font-medium truncate mr-5">
-              Account Summary
-          </h2>
-
           <a href="javascript:;" class="button bg-theme-10 mt-2 mb-3 pl-2 flex items-center" data-toggle="modal" data-target="#create-users">
             <i data-feather="pocket" class="w-4 h-4 mr-1"></i> Create Front Desk User Account
           </a>
-      </div>
-      <div class="grid grid-cols-12 gap-6 mt-5">
-
-          <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
-              <div class="report-box zoom-in">
-                  <div class="box p-5">
-                      <div class="text-3xl font-bold leading-8 mt-4">{total_registered_front_desk_users}</div>
-                      <div class="text-base text-gray-600 mt-4">Total Registered Clients</div>
-                  </div>
-              </div>
-          </div>
-
-          <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
-              <div class="report-box zoom-in">
-                  <div class="box p-5">
-                      <div class="text-3xl font-bold leading-8 mt-4">{total_unverified_front_desk_users}</div>
-                      <div class="text-base text-gray-600 mt-4">Total Unverified Clients</div>
-                  </div>
-              </div>
-          </div>
-
-          <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
-              <div class="report-box zoom-in">
-                  <div class="box p-5">
-                      <div class="text-3xl font-bold leading-8 mt-4">{2}</div>
-                      <div class="text-base text-gray-600 mt-4">Last Withdrawal Request</div>
-                  </div>
-              </div>
-          </div>
-
       </div>
   </div>
 </div>
@@ -125,8 +91,18 @@
               </div>
             </div>
 
-              <div class="flex flex-wrap">
+            <div class="flex flex-wrap">
+                {#if ! user.is_suspended}
+                <a  href="javascript:;" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-red-600 text-white zoom-in" on:click="{() => {actionUrl = route('frontdeskusers.suspend', user); actionMethod = 'PUT'}}"> <i class="w-3 h-3 mr-1 fill-current" data-feather="user"></i> SUSPEND </a>
+                {:else}
+
+                <a  href="javascript:;" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-red-600 text-white zoom-in" style="background-color: #aa4f0b;" on:click="{() => {actionUrl = route('frontdeskusers.unsuspend', user); actionMethod = 'PUT'}}"> <i class="w-3 h-3 mr-1 fill-current" data-feather="user"></i> UNSUSPEND </a>
+                
+                {/if}
+                <a href="javascript:;" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-crimson-600 text-white zoom-in" on:click="{() => {actionUrl = route('frontdeskusers.activate', user); actionMethod = 'PUT'}}"> <i class="w-3 h-3 mr-1 fill-current" data-feather="user"></i> ACTIVATE </a>
                 <InertiaLink href="" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-indigo-600 text-white zoom-in" > <i class="w-3 h-3 mr-1 fill-current" data-feather="user"></i> DETAILS </InertiaLink>
+                <a href="javascript:;" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-red-600 text-white zoom-in" style="background-color: #a00808;" on:click="{() => {actionUrl = route('frontdeskusers.activate', user); actionMethod = 'DELETE'}}"> <i class="w-3 h-3 mr-1 fill-current" data-feather="trash" style="margin: 0;"></i></a>
+                <!-- <InertiaLink href="" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-indigo-600 text-white zoom-in" > <i class="w-3 h-3 mr-1 fill-current" data-feather="user"></i> DETAILS </InertiaLink> -->
                 {#if user.is_verified}
                   {#if true}
                       {#if ! user.can_withdraw}
@@ -139,9 +115,6 @@
                       <a href="javascript:;" data-toggle="modal" on:click="{() => userDetails = user}" data-target="#set-btc-modal" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-purple-300 text-purple-800 zoom-in"> <i class="w-3 h-3 mr-1 fill-current" data-feather="wind"></i> SET BTC </a>
                   {/if}
 
-                  <InertiaLink href="{route('usertransactions.list', user)}" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-theme-8 text-gray-700 zoom-in"> <i class="w-3 h-3 mr-1 fill-current" data-feather="activity"></i> Transactions </InertiaLink>
-                  <InertiaLink href="{route('withdrawalrequests.list', user)}" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-theme-10 text-white zoom-in"> <i class="w-3 h-3 mr-1 fill-current" data-feather="sunset"></i> Withdrawal Requests</InertiaLink>
-                  <InertiaLink href="{route('usertransactions.deposit_requests', user)}" class="btn--xs mt-2 py-1 px-2 rounded-full flex items-center justify-center border dark:border-dark-5 ml-2 bg-pink-500 text-white zoom-in"> <i class="w-3 h-3 mr-1 fill-current" data-feather="database"></i> Deposit Requests</InertiaLink>
                 {/if}
 
                 {#if user.is_verified}
@@ -199,15 +172,15 @@
         <div class="intro-y box p-5">
           <div class="mt-3">
             <label for="name">Full Name</label>
-            <div class="mt-2"><input type="text" name="name" class="input w-full border mt-2" placeholder="e.g Mike Rex"></div>
+            <div class="mt-2"><input type="text" name="name" class="input w-full border mt-2" placeholder="e.g Mike Rex" bind:value="{details.name}"></div>
           </div>
           <div class="mt-3">
-            <label for="name">Phone Number</label>
-            <div class="mt-2"><input type="text" name="number" class="input w-full border mt-2" placeholder="e.g +2348183452673"></div>
+            <label for="name">Password</label>
+            <div class="mt-2"><input type="text" name="number" class="input w-full border mt-2" placeholder="e.g +2348183452673" bind:value="{details.password}"></div>
           </div>
           <div class="mt-3">
             <label for="name">Email</label>
-            <div class="mt-2"><input type="text" name="email" class="input w-full border mt-2" placeholder="e.g abx@gmail.com"></div>
+            <div class="mt-2"><input type="text" name="email" class="input w-full border mt-2" placeholder="e.g abx@gmail.com" bind:value="{details.email}"></div>
           </div>
           <div class="mt-3">
             <label for="name">Profile Image</label>
@@ -216,7 +189,7 @@
             </div>
           </div>
           <div class="text-right mt-5">
-            <button type="button" class="button w-24 bg-theme-1 text-white">Save</button>
+            <button type="submit" class="button w-24 bg-theme-1 text-white">Save</button>
           </div>
         </div>
         <!-- END: Form Layout -->

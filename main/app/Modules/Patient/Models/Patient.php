@@ -28,7 +28,11 @@ class Patient extends Model
 
   public function pending_appointment()
   {
-    return $this->hasOne(Appointment::class)->ofMany()->pending();
+    return $this->hasOne(Appointment::class)->ofMany([
+        'id' => 'max',
+    ], function ($query) {
+        $query->whereNull('discharged_at');
+    });
   }
 
   public function vital_signs()

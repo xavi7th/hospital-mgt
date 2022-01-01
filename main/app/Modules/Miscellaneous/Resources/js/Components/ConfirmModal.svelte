@@ -13,7 +13,7 @@
 
 </script>
 
-<!-- <a href="javascript:;" data-toggle="modal" data-target="#confirm-action-modal"  on:click="{() => {actionUrl = route('usertransactions.deposit_requests.approve', [user, req]);}}" class=" button button--sm flex items-center text-white rounded bg-purple-500">
+<!-- <a href="javascript:;" data-toggle="modal" data-target="#confirm-action-modal"  on:click="{() => {actionUrl = route('nurses.delete', user);}}" class=" button button--sm flex items-center text-white rounded bg-purple-500">
   <i data-feather="check-square" class="w-3 h-3 mr-1"></i> Approve
 </a> -->
 <!-- <ConfirmModal {actionUrl} {actionMethod} /> -->

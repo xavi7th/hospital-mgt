@@ -34,15 +34,6 @@
               </div>
           </div>
 
-          <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
-              <div class="report-box zoom-in">
-                  <div class="box p-5">
-                      <div class="text-3xl font-bold leading-8 mt-4">{statistics.last_withdrawal_request_time}</div>
-                      <div class="text-base text-gray-600 mt-4">Last Withdrawal Request</div>
-                  </div>
-              </div>
-          </div>
-
       </div>
 
       <!-- <div class="grid grid-cols-12 gap-6 mt-5">

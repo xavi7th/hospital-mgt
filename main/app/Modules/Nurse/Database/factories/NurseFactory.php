@@ -2,6 +2,7 @@
 
 namespace App\Modules\Nurse\Database\factories;
 
+use App\Modules\Nurse\Models\Nurse;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class NurseFactory extends Factory
@@ -11,7 +12,7 @@ class NurseFactory extends Factory
    *
    * @var string
    */
-  protected $model = \App\Modules\Nurse\Models\Nurse::class;
+  protected $model = Nurse::class;
 
   /**
    * Define the model's default state.

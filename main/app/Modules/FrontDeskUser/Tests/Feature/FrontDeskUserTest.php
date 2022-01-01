@@ -16,6 +16,30 @@ class FrontDeskUserTest extends TestCase
 {
   use RefreshDatabase;
 
+
+  public function test_front_desk_user_visit_login_page()
+  {
+    $rsp = $this->get(route('auth.login'))->assertOk();
+
+    $rsp->assertInertia(fn (Assert $page) => $page
+      ->component('UserAuth::Login')
+      ->url('/login')
+      ->has('can_reset_password')
+      ->has('status')
+    );
+  }
+
+  public function test_front_desk_user_can_login()
+  {
+
+    $this->post(route('auth.login'), ['email' => $this->front_desk_user->email, 'password' => 'pass'])
+    ->assertSessionMissing('flash.error')
+    ->assertSessionHasNoErrors()
+    ->assertRedirect(route($this->front_desk_user->dashboardRoute()));
+
+    $this->assertAuthenticated($this->getAuthGuard($this->front_desk_user));
+  }
+
   public function test_front_desk_users_can_visit_their_dashboard()
   {
 
@@ -50,12 +74,13 @@ class FrontDeskUserTest extends TestCase
 
     $rsp->assertInertia(fn (Assert $page) => $page
       ->component('FrontDeskUser::Dashboard')
-      ->url('/frontdesk-users/dashboard')
+      ->url('/front-desk-users/dashboard')
       ->has('authuser', fn($page) => $page
         ->where('name', $this->front_desk_user->name)
         ->etc()
       )
       ->has('due_appointments', 10)
+      ->where('total_num_of_reg_patients', 10)
     );
 
   }
@@ -85,16 +110,17 @@ class FrontDeskUserTest extends TestCase
     $rsp->assertInertia(fn (Assert $page) => $page
       ->component('FrontDeskUser::PatientDetails')
       ->url('/patients/'. $patient->id)
+      ->has('doctors')
       ->has('patient', fn($page) => $page
         ->has('appointments', 11, fn($page) => $page
           ->where('case_notes', [])
           ->etc()
         )
-        ->etc()
-      )
-      ->has('pending_appointment', fn($page) => $page
-        ->where('doctor.name', $doctor->name)
-        ->where('booked_by.name', $this->front_desk_user->name)
+        ->has('pending_appointment', fn($page) => $page
+          ->where('doctor.name', $doctor->name)
+          ->where('booked_by.name', $this->front_desk_user->name)
+          ->etc()
+        )
         ->etc()
       )
     );
@@ -212,7 +238,7 @@ class FrontDeskUserTest extends TestCase
     );
   }
 
-  public function test_front_desk_users_can_post_appointments_for_vitals()
+  public function test_front_desk_users_can_send_patients_for_vitals()
   {
     $patient = Patient::factory()->create();
     $doctor = Doctor::factory()->create();

@@ -27,6 +27,8 @@ class AppointmentController extends Controller
     $request->validate([
       'doctor_id' => ['required', 'exists:doctors,id'],
       'appointment_date' => ['required', 'date']
+    ],[
+      'doctor_id.required' => 'Select the doctor that this appointment is booked for',
     ]);
 
     $patient->appointments()->create([
