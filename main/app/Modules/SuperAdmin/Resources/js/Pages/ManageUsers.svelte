@@ -15,45 +15,68 @@
 
   $: ({ errors } = $page.props);
 
-  let actionUrl, actionMethod, details={}, searchTerm = "";
+  let actionUrl, actionMethod, details={}, searchTerm = "", dataList="", userType="", createRouteName="", nameedRoute="";
 
-	$: filteredList = front_desk_users.filter(item => item.name.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 || item.email.indexOf(searchTerm.toLowerCase()) !== -1);
+  export let front_desk_users = [], doctors = [], nurses = [];
 
-  export let front_desk_users = [],
-    total_registered_front_desk_users = front_desk_users.length,
-    total_unverified_front_desk_users = 0;
+  $: dataList = front_desk_users ?? doctors ?? nurses;
+
+	$: filteredList = dataList.filter(item => item.name.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 || item.email.indexOf(searchTerm.toLowerCase()) !== -1);
+
+  $:{
+    if ($page.url === '/front-desk-users') {
+      userType = 'Front Desk User';
+      nameedRoute = 'frontdeskusers';
+      createRouteName = 'frontdeskusers.create';
+      dataList = front_desk_users;
+    }
+    else if ($page.url === '/doctors') {
+      userType = 'Doctor';
+      nameedRoute = 'doctors';
+      createRouteName = 'doctors.create';
+      dataList = doctors;
+    }
+    else if ($page.url === '/nurses') {
+      userType = 'Nurse';
+      nameedRoute = 'nurses';
+      createRouteName = 'nurses.create';
+      dataList = nurses;
+    }
+  }
+
 
 
   let createUser = () => {
-    BlockToast.fire({text:'Creating fron desk user account. Please wait ...'})
+    BlockToast.fire({text:'Creating '+userType+' account. Please wait ...'})
 
-    Inertia.post(route('frontdeskusers.create'), details);
+    Inertia.post(route(createRouteName), details);
   }
 
-  onMount(() => {
-    front_desk_users.forEach(user => {
-      if(!user.is_active){
-        total_unverified_front_desk_users++
-      }
-    });
-  })
+  // onMount(() => {
+  //   front_desk_users.forEach(user => {
+  //     if(!user.is_active){
+  //       total_unverified_front_desk_users++
+  //     }
+  //   });
+  // });
 
 </script>
 
 <div class="grid grid-cols-12 gap-6">
   <div class="col-span-12 mt-8 flex intro-y">
     <h2 class="text-lg font-medium mr-auto">
-      Front Desk Users
+      {userType}
     </h2>
     <div>
         <a href="javascript:;" class="button bg-theme-10 pl-2 flex items-center" data-toggle="modal" data-target="#create-users">
-          <i data-feather="pocket" class="w-4 h-4 mr-1"></i> Create Front Desk User Account
+          <i data-feather="pocket" class="w-4 h-4 mr-1"></i> Create {userType} Account
         </a>
+
     </div>
   </div>
 </div>
 
-<div class="grid grid-cols-12 gap-6 mt-5">
+<!-- <div class="grid grid-cols-12 gap-6 mt-5">
 
   <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y">
       <div class="report-box zoom-in">
@@ -73,7 +96,7 @@
       </div>
   </div>
 
-</div>
+</div> -->
 
 <div class="grid grid-cols-12 gap-6 mt-10 border-t border-gray-200 dark:border-dark-5 pt-10">
   <div class="intro-y col-span-12 flex flex-wrap sm:flex-no-wrap items-center mt-2">
@@ -104,12 +127,12 @@
 
             <div class="flex flex-wrap">
                 {#if ! user.is_suspended}
-                  <a  href="javascript:;" class="button button--sm rounded flex items-center justify-center border dark:border-dark-5 ml-2 bg-red-600 text-white zoom-in" data-toggle="modal" data-target="#confirm-action-modal" on:click="{() => {actionUrl = route('frontdeskusers.suspend', user); actionMethod = 'PUT'}}"> SUSPEND </a>
+                  <a  href="javascript:;" class="button button--sm rounded flex items-center justify-center border dark:border-dark-5 ml-2 bg-red-600 text-white zoom-in" data-toggle="modal" data-target="#confirm-action-modal" on:click="{() => {actionUrl = route(nameedRoute+'.suspend', user); actionMethod = 'PUT'}}"> SUSPEND </a>
                 {:else}
-                  <a  href="javascript:;" class="button button--sm rounded flex items-center justify-center border dark:border-dark-5 ml-2 bg-blue-400 text-white zoom-in" data-toggle="modal" data-target="#confirm-action-modal" on:click="{() => {actionUrl = route('frontdeskusers.unsuspend', user); actionMethod = 'PUT'}}"> UNSUSPEND </a>
+                  <a  href="javascript:;" class="button button--sm rounded flex items-center justify-center border dark:border-dark-5 ml-2 bg-blue-400 text-white zoom-in" data-toggle="modal" data-target="#confirm-action-modal" on:click="{() => {actionUrl = route(nameedRoute+'.unsuspend', user); actionMethod = 'PUT'}}"> UNSUSPEND </a>
                 {/if}
                 {#if ! user.is_activated}
-                  <a href="javascript:;" class="button button--sm rounded flex items-center justify-center border dark:border-dark-5 ml-2 bg-green-600 text-white zoom-in" data-toggle="modal" data-target="#confirm-action-modal" on:click="{() => {actionUrl = route('frontdeskusers.activate', user); actionMethod = 'PUT'}}"> ACTIVATE </a>
+                  <a href="javascript:;" class="button button--sm rounded flex items-center justify-center border dark:border-dark-5 ml-2 bg-green-600 text-white zoom-in" data-toggle="modal" data-target="#confirm-action-modal" on:click="{() => {actionUrl = route(nameedRoute+'.activate', user); actionMethod = 'PUT'}}"> ACTIVATE </a>
                 {/if}
 
                 <!-- <a href="javascript:;" class="button button--sm rounded flex items-center justify-center border dark:border-dark-5 ml-2 bg-red-600 text-white zoom-in" style="background-color: #a00808;" on:click="{() => {actionUrl = route('frontdeskusers.activate', user); actionMethod = 'DELETE'}}"> <i class="w-3 h-3 mr-1 fill-current" data-feather="trash" style="margin: 0;"></i>DELETE</a> -->
@@ -146,7 +169,7 @@
           <FileInput maxHeight={2000} maxWidth={2000} className="my-3 rounded" height=100 label="User's Image" name="avatar" accept="image/*" errors={errors.avatar} onChange={file => details.avatar = file}/>
         </div>
         <div class="text-right mt-5">
-          <button type="submit" class="button bg-theme-1 text-white" disabled={details.password != details.password_confirmation}>Create Front Desk User Account</button>
+          <button type="submit" class="button bg-theme-1 text-white" disabled={details.password != details.password_confirmation}>Create {userType} Account</button>
         </div>
       </div>
       <!-- END: Form Layout -->

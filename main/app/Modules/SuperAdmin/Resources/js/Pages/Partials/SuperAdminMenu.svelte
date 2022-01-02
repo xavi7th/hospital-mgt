@@ -1,9 +1,24 @@
 <script>
 import { page, InertiaLink } from '@inertiajs/inertia-svelte';
 
+let createRouteName = "";
+
 $: ({ app } = $page.props);
 
-$: currentRoute = route().current();
+$: {
+  if ($page.url === '/front-desk-users') {
+      createRouteName = 'frontdeskusers.index';
+    }
+    else if ($page.url === '/doctors') {
+      createRouteName = 'doctors.index';
+    }
+    else if ($page.url === '/nurses') {
+      createRouteName = 'nurses.index';
+    }
+    else if ($page.url === '/super-admins') {
+      createRouteName = 'superadmins.dashboard';
+    }
+  }
 </script>
 
 <!-- BEGIN: Side Menu -->
@@ -14,25 +29,25 @@ $: currentRoute = route().current();
   <div class="side-nav__devider my-6"></div>
   <ul>
     <li>
-      <InertiaLink href="{route('superadmins.dashboard')}" class="side-menu {currentRoute === 'superadmins.dashboard' ? 'side-menu--active' : ''}">
+      <InertiaLink href="{route('superadmins.dashboard')}" class="side-menu {createRouteName === 'superadmins.dashboard' ? 'side-menu--active' : ''}">
         <div class="side-menu__icon"> <i data-feather="home"></i> </div>
         <div class="side-menu__title"> Dashboard</div>
       </InertiaLink>
     </li>
     <li>
-      <InertiaLink href="{route('frontdeskusers.index')}" class="side-menu {currentRoute === 'frontdeskusers.index' ? 'side-menu--active' : ''}">
+      <InertiaLink href="{route('frontdeskusers.index')}" class="side-menu {createRouteName === 'frontdeskusers.index' ? 'side-menu--active' : ''}">
         <div class="side-menu__icon"> <i data-feather="user"></i> </div>
         <div class="side-menu__title"> Front Desk Users</div>
       </InertiaLink>
     </li>
     <li>
-      <InertiaLink href="{route('doctors.index')}" class="side-menu {currentRoute === 'doctors.index' ? 'side-menu--active' : ''}">
+      <InertiaLink href="{route('doctors.index')}" class="side-menu {createRouteName === 'doctors.index' ? 'side-menu--active' : ''}">
         <div class="side-menu__icon"> <i data-feather="users"></i> </div>
         <div class="side-menu__title"> Doctors</div>
       </InertiaLink>
     </li>
     <li>
-      <InertiaLink href="{route('nurses.index')}" class="side-menu {currentRoute === 'nurses.index' ? 'side-menu--active' : ''}">
+      <InertiaLink href="{route('nurses.index')}" class="side-menu {createRouteName === 'nurses.index' ? 'side-menu--active' : ''}">
         <div class="side-menu__icon"> <i data-feather="users"></i> </div>
         <div class="side-menu__title"> Nurses</div>
       </InertiaLink>
